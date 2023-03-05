@@ -1,4 +1,4 @@
-package com.Cinema.security.auth;
+package com.Cinema.security.auth.request;
 
 public class AuthenticationRequest {
 

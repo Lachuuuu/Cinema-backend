@@ -1,6 +1,7 @@
 package com.Cinema.security.auth;
 
-import jakarta.servlet.http.Cookie;
+import com.Cinema.security.auth.request.AuthenticationRequest;
+import com.Cinema.security.auth.request.RegisterRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -17,8 +18,11 @@ public class AuthenticationController {
    @Autowired
    private AuthenticationService authenticationService;
 
+   @Autowired
+   private CookieService cookieService;
+
    @PostMapping(value = "/register", consumes = MediaType.APPLICATION_JSON_VALUE)
-   public ResponseEntity<AuthenticationResponse> register(
+   public ResponseEntity<String> register(
          @RequestBody RegisterRequest request
    ) {
       return ResponseEntity.ok(authenticationService.register(request));
@@ -29,17 +33,8 @@ public class AuthenticationController {
          @RequestBody AuthenticationRequest request,
          HttpServletResponse response
    ) {
-      final Cookie jwtCookie = new Cookie("jwt", authenticationService.authenticate(request).getToken());
-      jwtCookie.setHttpOnly(true);
-      jwtCookie.setPath("/");
-      jwtCookie.setMaxAge(10 * 60);
-      response.addCookie(jwtCookie);
-
-      final Cookie loogedCookie = new Cookie("logedIn", "true");
-      loogedCookie.setPath("/");
-      loogedCookie.setMaxAge(10 * 60);
-
-      response.addCookie(loogedCookie);
+      response.addCookie(cookieService.createJwtCookie(request));
+      response.addCookie(cookieService.createUserCookie(request));
       return ResponseEntity.ok().build();
    }
 }

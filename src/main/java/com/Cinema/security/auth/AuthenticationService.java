@@ -1,5 +1,7 @@
 package com.Cinema.security.auth;
 
+import com.Cinema.security.auth.request.AuthenticationRequest;
+import com.Cinema.security.auth.request.RegisterRequest;
 import com.Cinema.security.jwt.JwtService;
 import com.Cinema.user.User;
 import com.Cinema.user.UserRepository;
@@ -33,7 +35,7 @@ public class AuthenticationService {
    @Autowired
    private PasswordEncoder passwordEncoder;
 
-   public AuthenticationResponse register(RegisterRequest request) {
+   public String register(RegisterRequest request) {
 
       UserRole userRole = userRoleRepository.findByName("USER").orElse(null);
 
@@ -48,10 +50,10 @@ public class AuthenticationService {
       userRepository.save(user);
 
       var jwtToken = jwtService.generateToken(user);
-      return new AuthenticationResponse(jwtToken);
+      return jwtToken;
    }
 
-   public AuthenticationResponse authenticate(AuthenticationRequest request) {
+   public String authenticate(AuthenticationRequest request) {
       authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
             request.getEmail(),
             request.getPassword()
@@ -60,7 +62,7 @@ public class AuthenticationService {
       User user = userRepository.findByEmail(request.getEmail()).orElseThrow();
 
       var jwtToken = jwtService.generateToken(user);
-      return new AuthenticationResponse(jwtToken);
+      return jwtToken;
    }
 
 }

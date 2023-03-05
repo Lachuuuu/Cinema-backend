@@ -13,7 +13,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity
-public class SecurityConfiguration {
+public class SecurityConfig {
 
    @Autowired
    private JwtAuthenticationFilter jwtAuthenticationFilter;
@@ -24,6 +24,8 @@ public class SecurityConfiguration {
    @Bean
    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
       http
+            .cors()
+            .and()
             .csrf()
             .disable()
             .authorizeHttpRequests()
@@ -40,5 +42,4 @@ public class SecurityConfiguration {
 
       return http.build();
    }
-
 }
