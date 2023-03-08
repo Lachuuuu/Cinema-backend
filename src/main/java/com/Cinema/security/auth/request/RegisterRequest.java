@@ -6,18 +6,12 @@ import java.time.LocalDate;
 import java.util.Set;
 
 public class RegisterRequest {
-
    private String email;
-
-   private String password;
-
    private String firstName;
-
    private String lastName;
-
    private LocalDate bDate;
-
    private String phoneNumber;
+   private String password;
 
    public RegisterRequest() {
    }

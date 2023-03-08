@@ -35,7 +35,7 @@ public class AuthenticationService {
    @Autowired
    private PasswordEncoder passwordEncoder;
 
-   public String register(RegisterRequest request) {
+   public User register(RegisterRequest request) {
 
       UserRole userRole = userRoleRepository.findByName("USER").orElse(null);
 
@@ -49,8 +49,7 @@ public class AuthenticationService {
             Set.of(userRole));
       userRepository.save(user);
 
-      var jwtToken = jwtService.generateToken(user);
-      return jwtToken;
+      return user;
    }
 
    public String authenticate(AuthenticationRequest request) {

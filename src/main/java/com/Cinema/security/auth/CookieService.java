@@ -22,11 +22,12 @@ public class CookieService {
       return jwtCookie;
    }
 
-   public Cookie createUserCookie(AuthenticationRequest request) {
+   public Cookie createUserCookie() {
       final Cookie userCookie = new Cookie("logedIn", "true");
       userCookie.setPath("/");
       userCookie.setMaxAge(EXPIRATION_TIME);
       return userCookie;
    }
+
 
 }
