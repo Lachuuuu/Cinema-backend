@@ -2,7 +2,8 @@ package com.Cinema.user;
 
 import com.Cinema.user.userRole.UserRole;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.Size;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -21,29 +22,22 @@ public class User implements UserDetails {
    private Long id;
 
    @Column(name = "email", unique = true)
-   @NotBlank(message = "email nie jest poprawny")
-   @Email(regexp = "[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,3}",
-         flags = Pattern.Flag.CASE_INSENSITIVE, message = "email nie jest poprawny")
    private String email;
 
    @Column(name = "firstName")
-   @NotBlank(message = "imie nie jest poprawne")
    private String firstName;
 
    @Column(name = "lastName")
-   @NotBlank(message = "nazwisko nie jest poprawne")
    private String lastName;
 
    @Column(name = "birthDate")
-   @NotNull(message = "data urodzenia nie jest poprawna")
+   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
    private LocalDate bDate;
 
    @Column(name = "phoneNumber", length = 9, unique = true)
-   @Size(min = 9, max = 9, message = "bledny numer telefonu")
    private String phoneNumber;
 
    @Column(name = "password")
-   @NotBlank(message = "haslo nie jest poprawne")
    @Size(min = 6, message = "haslo nie jest poprawne powinno miec przynajmniej 6 znakow")
    private String password;
 

@@ -6,84 +6,72 @@ import java.time.LocalDate;
 import java.util.Set;
 
 public class UserDto {
+   private String email;
 
-    private Long id;
+   private String firstName;
 
-    private String email;
+   private String lastName;
 
-    private String firstName;
+   private LocalDate bDate;
 
-    private String lastName;
+   private String phoneNumber;
 
-    private LocalDate bDate;
+   private Set<UserRole> roles;
 
-    private String phoneNumber;
+   public UserDto(String email, String firstName, String lastName, LocalDate bDate, String phoneNumber, Set<UserRole> roles) {
+      this.email = email;
+      this.firstName = firstName;
+      this.lastName = lastName;
+      this.bDate = bDate;
+      this.phoneNumber = phoneNumber;
+      this.roles = roles;
+   }
 
-    private Set<UserRole> roles;
+   public String getEmail() {
+      return email;
+   }
 
-    public UserDto(Long id, String email, String firstName, String lastName, LocalDate bDate, String phoneNumber, Set<UserRole> roles) {
-        this.id = id;
-        this.email = email;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.bDate = bDate;
-        this.phoneNumber = phoneNumber;
-        this.roles = roles;
-    }
+   public void setEmail(String email) {
+      this.email = email;
+   }
 
-    public Long getId() {
-        return id;
-    }
+   public String getFirstName() {
+      return firstName;
+   }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+   public void setFirstName(String firstName) {
+      this.firstName = firstName;
+   }
 
-    public String getEmail() {
-        return email;
-    }
+   public String getLastName() {
+      return lastName;
+   }
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
+   public void setLastName(String lastName) {
+      this.lastName = lastName;
+   }
 
-    public String getFirstName() {
-        return firstName;
-    }
+   public LocalDate getbDate() {
+      return bDate;
+   }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
+   public void setbDate(LocalDate bDate) {
+      this.bDate = bDate;
+   }
 
-    public String getLastName() {
-        return lastName;
-    }
+   public String getPhoneNumber() {
+      return phoneNumber;
+   }
 
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
+   public void setPhoneNumber(String phoneNumber) {
+      this.phoneNumber = phoneNumber;
+   }
 
-    public LocalDate getbDate() {
-        return bDate;
-    }
+   public Set<UserRole> getRoles() {
+      return roles;
+   }
 
-    public void setbDate(LocalDate bDate) {
-        this.bDate = bDate;
-    }
-
-    public String getPhoneNumber() {
-        return phoneNumber;
-    }
-
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
-    }
-
-    public Set<UserRole> getRoles() {
-        return roles;
-    }
-
-    public void setRoles(Set<UserRole> roles) {
-        this.roles = roles;
-    }
+   public void setRoles(Set<UserRole> roles) {
+      this.roles = roles;
+   }
 }

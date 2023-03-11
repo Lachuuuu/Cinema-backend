@@ -1,5 +1,6 @@
 package com.Cinema.security.auth;
 
+import com.Cinema.security.auth.exception.BadRequestException;
 import com.Cinema.security.auth.request.AuthenticationRequest;
 import com.Cinema.security.auth.request.RegisterRequest;
 import com.Cinema.security.jwt.JwtService;
@@ -14,6 +15,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Set;
 
 @Service
@@ -35,7 +37,9 @@ public class AuthenticationService {
    @Autowired
    private PasswordEncoder passwordEncoder;
 
-   public User register(RegisterRequest request) {
+   public User register(RegisterRequest request) throws BadRequestException {
+      String validation = validateRegisterRequest(request);
+      if (validation != null) throw new BadRequestException(validation);
 
       UserRole userRole = userRoleRepository.findByName("USER").orElse(null);
 
@@ -62,6 +66,22 @@ public class AuthenticationService {
 
       var jwtToken = jwtService.generateToken(user);
       return jwtToken;
+   }
+
+   private String validateRegisterRequest(RegisterRequest request) {
+      if (!LocalDateTime.now().isBefore(request.getbDate().atStartOfDay())) return "wrong birth date";
+
+      if (!request.getEmail().matches("[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,3}")) return "wrong email address";
+      Boolean user = userRepository.existsByEmail(request.getEmail());
+      if (user) return "email is taken";
+
+      if (request.getPhoneNumber().length() != 9) return "wrong length of phone number";
+      user = userRepository.existsByPhoneNumber(request.getPhoneNumber());
+      if (user) return "phone number is taken";
+
+      if (request.getPassword().length() < 4) return "too short password, password should have atleast 4 signs";
+
+      return null;
    }
 
 }

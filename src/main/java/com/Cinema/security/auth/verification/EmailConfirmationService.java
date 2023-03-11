@@ -2,11 +2,14 @@ package com.Cinema.security.auth.verification;
 
 import com.Cinema.user.User;
 import com.Cinema.user.UserRepository;
+import com.google.gson.Gson;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -22,8 +25,15 @@ public class EmailConfirmationService {
    private EmailConfirmationRepository emailConfirmationRepository;
    @Autowired
    private UserRepository userRepository;
+   @Value("${frontend.url}")
+   private String frontendUrl;
 
-   public ResponseEntity<?> sendEmail(User user) {
+   @Autowired
+   private Gson gson;
+
+
+   @Async
+   public void sendEmail(User user) {
       String token = UUID.randomUUID().toString();
       EmailConfirmationToken confirmationToken = new EmailConfirmationToken(null, token, LocalDate.now().plusDays(1), user);
 
@@ -33,10 +43,8 @@ public class EmailConfirmationService {
       mailMessage.setTo(user.getEmail());
       mailMessage.setSubject("Complete Registration!");
       mailMessage.setText("To confirm your account, please click here : "
-            + "http://localhost:8080/auth/confirm-account?token=" + confirmationToken.getConfirmationToken());
+            + frontendUrl + "confirm-account?token=" + confirmationToken.getConfirmationToken());
       javaMailSender.send(mailMessage);
-
-      return ResponseEntity.ok("Verify email by the link sent on your email address");
    }
 
    public ResponseEntity<?> confirmEmail(String confirmationToken) {
@@ -48,9 +56,9 @@ public class EmailConfirmationService {
          user.setActive(true);
          userRepository.save(user);
          emailConfirmationRepository.delete(token);
-         return ResponseEntity.ok("Email verified successfully!");
+         return ResponseEntity.ok(gson.toJson("Email verified successfully!"));
       }
-      return ResponseEntity.badRequest().body("Error: Couldn't verify email");
+      return ResponseEntity.badRequest().body(gson.toJson("Couldn't verify email"));
    }
 
 

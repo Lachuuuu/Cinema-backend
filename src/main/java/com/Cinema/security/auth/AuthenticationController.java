@@ -1,8 +1,11 @@
 package com.Cinema.security.auth;
 
+import com.Cinema.security.auth.exception.BadRequestException;
 import com.Cinema.security.auth.request.AuthenticationRequest;
 import com.Cinema.security.auth.request.RegisterRequest;
 import com.Cinema.security.auth.verification.EmailConfirmationService;
+import com.Cinema.user.User;
+import com.google.gson.Gson;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,24 +24,32 @@ public class AuthenticationController {
    @Autowired
    private EmailConfirmationService emailConfirmationService;
 
+   @Autowired
+   private Gson gson;
+
    @PostMapping(value = "/register", consumes = MediaType.APPLICATION_JSON_VALUE)
    public ResponseEntity<?> register(
          @Valid @RequestBody RegisterRequest request
    ) {
-      return emailConfirmationService.sendEmail(authenticationService.register(request));
+      User user;
+      try {
+         user = authenticationService.register(request);
+      } catch (BadRequestException e) {
+         return ResponseEntity.badRequest().body(gson.toJson(e.getMessage()));
+      }
+      emailConfirmationService.sendEmail(user);
+      return ResponseEntity.ok(gson.toJson("Verify email by the link sent on your email address"));
    }
 
    @PostMapping(value = "/authenticate", consumes = MediaType.APPLICATION_JSON_VALUE)
-   public ResponseEntity<Void> auth(
+   public ResponseEntity<?> auth(
          @RequestBody AuthenticationRequest request,
          HttpServletResponse response
    ) {
-      response.addCookie(cookieService.createJwtCookie(request));
-      response.addCookie(cookieService.createUserCookie());
-      return ResponseEntity.ok().build();
+      return cookieService.createAuthenticationCookies(request, response);
    }
 
-   @GetMapping(value = "/confirm-account")
+   @GetMapping(value = "/confirm-account", produces = MediaType.APPLICATION_JSON_VALUE)
    public ResponseEntity<?> confirmUserAccount(@RequestParam("token") String confirmationToken) {
       return emailConfirmationService.confirmEmail(confirmationToken);
    }

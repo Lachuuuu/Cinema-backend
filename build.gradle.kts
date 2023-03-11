@@ -27,6 +27,7 @@ dependencies {
     implementation("io.jsonwebtoken:jjwt-api:0.11.5")
     implementation("org.springframework.boot:spring-boot-starter-mail:3.0.4")
     implementation("jakarta.mail:jakarta.mail-api:2.1.1")
+    implementation("com.google.code.gson:gson:2.10.1")
     developmentOnly("org.springframework.boot:spring-boot-devtools")
     runtimeOnly("org.postgresql:postgresql")
     runtimeOnly("io.jsonwebtoken:jjwt-impl:0.11.5")
