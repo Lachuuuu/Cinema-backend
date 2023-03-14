@@ -1,30 +1,36 @@
-package com.Cinema.user.dto;
+package com.Cinema.security.auth.request;
 
 import com.Cinema.user.userRole.UserRole;
 
 import java.time.LocalDate;
 import java.util.Set;
 
-public class UserDto {
+public class RegisterRequest {
    private String email;
-
    private String firstName;
-
    private String lastName;
-
    private LocalDate bDate;
-
    private String phoneNumber;
+   private String password;
 
-   private Set<UserRole> roles;
+   public RegisterRequest() {
+   }
 
-   public UserDto(String email, String firstName, String lastName, LocalDate bDate, String phoneNumber, Set<UserRole> roles) {
+   public RegisterRequest(String email, String password, String firstName, String lastName, LocalDate bDate, String phoneNumber, Set<UserRole> roles) {
       this.email = email;
+      this.password = password;
       this.firstName = firstName;
       this.lastName = lastName;
       this.bDate = bDate;
       this.phoneNumber = phoneNumber;
-      this.roles = roles;
+   }
+
+   public String getPassword() {
+      return password;
+   }
+
+   public void setPassword(String password) {
+      this.password = password;
    }
 
    public String getEmail() {
@@ -67,11 +73,4 @@ public class UserDto {
       this.phoneNumber = phoneNumber;
    }
 
-   public Set<UserRole> getRoles() {
-      return roles;
-   }
-
-   public void setRoles(Set<UserRole> roles) {
-      this.roles = roles;
-   }
 }

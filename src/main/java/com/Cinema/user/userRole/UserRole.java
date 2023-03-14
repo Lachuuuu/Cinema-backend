@@ -14,7 +14,7 @@ public class UserRole {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @Column(name = "name")
+    @Column(name = "name", length = 20)
     @NotBlank
     private String name;
 
