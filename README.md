@@ -4,8 +4,8 @@ Project is still in production phase. I'm trying to upgrade it in my free time, 
 
 DONE:  
 -cookies  
--register  
--login  
+-registration  
+-login 
 -jwt tokens  
 -email verification  
 -spring security configs  
