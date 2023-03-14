@@ -5,7 +5,7 @@ Project is still in production phase. I'm trying to upgrade it in my free time, 
 DONE:  
 -cookies  
 -registration  
--login 
+-login  
 -jwt tokens  
 -email verification  
 -spring security configs  
