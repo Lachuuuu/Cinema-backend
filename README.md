@@ -18,4 +18,5 @@ TO-DO:
 -CRUD for screening's  
 -tests  
 -docker  
+-loombok migration??  
 ...  
