@@ -44,6 +44,9 @@ public class CookieService {
          response.addCookie(jwtCookie);
          userCookies.forEach(it -> response.addCookie(it));
 
+         response.setHeader("Access-Control-Allow-Credentials", String.valueOf(true));
+         // response.setHeader("Access-Control-Allow-Origin", "*");
+
          return ResponseEntity.ok("Successfully Authenticated");
       }
       return ResponseEntity.ok("Cannot Authenticate");
@@ -64,7 +67,10 @@ public class CookieService {
       userCookies.forEach((key, value) -> {
          Cookie cookie = new Cookie(key, value);
          cookie.setPath("/");
+         cookie.setDomain(null);
          cookie.setMaxAge(EXPIRATION_TIME);
+         //cookie.setAttribute("SameSite", "None");
+         //cookie.setSecure(true);
          cookies.add(cookie);
       });
 
