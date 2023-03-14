@@ -14,8 +14,8 @@ DONE:
 TO-DO:  
 -CRUD for movies  
 -CRUD for reservations  
--CRUD for hall's
--CRUD for screening's
+-CRUD for hall's  
+-CRUD for screening's  
 -tests  
 -docker  
 ...  
