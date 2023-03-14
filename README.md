@@ -1,6 +1,6 @@
 # Cinema-backend
 
-Project is still in production phase. I'm trying to upgrade it in my free time, you can see list of realized and planned features below
+Project is still in production phase. I'm trying to upgrade it in my free time, you can see list of completed and planned features below
 
 DONE:  
 -cookies  
