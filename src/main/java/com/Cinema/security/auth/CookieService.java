@@ -49,7 +49,7 @@ public class CookieService {
 
          return ResponseEntity.ok(gson.toJson("Successfully Authenticated"));
       }
-      return ResponseEntity.badRequest().body(gson.toJson("Cannot Authenticate"));
+      return ResponseEntity.badRequest().body(gson.toJson("Authentication Failed"));
    }
 
    private List<Cookie> createUserCookies(User user) {
