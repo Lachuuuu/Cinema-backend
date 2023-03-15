@@ -47,9 +47,9 @@ public class CookieService {
          response.setHeader("Access-Control-Allow-Credentials", String.valueOf(true));
          // response.setHeader("Access-Control-Allow-Origin", "*");
 
-         return ResponseEntity.ok("Successfully Authenticated");
+         return ResponseEntity.ok(gson.toJson("Successfully Authenticated"));
       }
-      return ResponseEntity.ok("Cannot Authenticate");
+      return ResponseEntity.badRequest().body(gson.toJson("Authentication Failed"));
    }
 
    private List<Cookie> createUserCookies(User user) {
@@ -57,12 +57,12 @@ public class CookieService {
       HashMap<String, String> userCookies = new HashMap<>();
       UserDto userDto = userAssembler.toUserDto(user);
 
-      userCookies.put("bDate", userDto.getbDate().toString());
-      userCookies.put("email", userDto.getEmail());
+      //userCookies.put("bDate", userDto.getbDate().toString());
+      //userCookies.put("email", userDto.getEmail());
       userCookies.put("firstName", userDto.getFirstName());
-      userCookies.put("lastName", userDto.getLastName());
-      userCookies.put("phoneNumber", userDto.getPhoneNumber());
-      userCookies.put("roles", parseUserRoles(userDto.getRoles()));
+      //userCookies.put("lastName", userDto.getLastName());
+      //userCookies.put("phoneNumber", userDto.getPhoneNumber());
+      //userCookies.put("roles", parseUserRoles(userDto.getRoles()));
 
       userCookies.forEach((key, value) -> {
          Cookie cookie = new Cookie(key, value);
