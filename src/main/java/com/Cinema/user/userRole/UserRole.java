@@ -4,33 +4,30 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 
 @Entity
-@Table(name = "role",
-        uniqueConstraints = {
-                @UniqueConstraint(columnNames = {"name"})
-        })
+@Table(name = "role")
 public class UserRole {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false)
-    private Long id;
+   @Id
+   @GeneratedValue(strategy = GenerationType.IDENTITY)
+   @Column(name = "id", nullable = false)
+   private Long id;
 
-    @Column(name = "name", length = 20)
-    @NotBlank
-    private String name;
+   @Column(name = "name", length = 20)
+   @NotBlank
+   private String name;
 
-    public UserRole() {
-    }
+   public UserRole() {
+   }
 
-    public UserRole(Long id, String name) {
-        this.id = id;
-        this.name = name;
-    }
+   public UserRole(Long id, String name) {
+      this.id = id;
+      this.name = name;
+   }
 
-    public Long getId() {
-        return id;
-    }
+   public Long getId() {
+      return id;
+   }
 
-    public String getName() {
-        return name;
-    }
+   public String getName() {
+      return name;
+   }
 }

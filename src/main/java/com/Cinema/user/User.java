@@ -2,7 +2,6 @@ package com.Cinema.user;
 
 import com.Cinema.user.userRole.UserRole;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Size;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -38,7 +37,6 @@ public class User implements UserDetails {
    private String phoneNumber;
 
    @Column(name = "password")
-   @Size(min = 6, message = "haslo nie jest poprawne powinno miec przynajmniej 6 znakow")
    private String password;
 
    @Column(name = "role")
