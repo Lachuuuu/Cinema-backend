@@ -69,7 +69,7 @@ public class AuthenticationService {
    }
 
    private String validateRegisterRequest(RegisterRequest request) {
-      if (!LocalDateTime.now().isBefore(request.getbDate().atStartOfDay())) return "wrong birth date";
+      if (!request.getbDate().atStartOfDay().isBefore(LocalDateTime.now())) return "wrong birth date";
 
       if (!request.getEmail().matches("[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,3}")) return "wrong email address";
       Boolean user = userRepository.existsByEmail(request.getEmail());
