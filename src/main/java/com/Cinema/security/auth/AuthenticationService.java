@@ -47,10 +47,11 @@ public class AuthenticationService {
             request.getEmail(),
             request.getFirstName(),
             request.getLastName(),
-            request.getbDate(),
+            request.getBDate(),
             request.getPhoneNumber(),
             passwordEncoder.encode(request.getPassword()),
-            Set.of(userRole));
+            Set.of(userRole),
+            false);
       userRepository.save(user);
 
       return user;
@@ -69,7 +70,7 @@ public class AuthenticationService {
    }
 
    private String validateRegisterRequest(RegisterRequest request) {
-      if (!request.getbDate().atStartOfDay().isBefore(LocalDateTime.now())) return "wrong birth date";
+      if (!request.getBDate().atStartOfDay().isBefore(LocalDateTime.now())) return "wrong birth date";
 
       if (!request.getEmail().matches("[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,3}")) return "wrong email address";
       Boolean user = userRepository.existsByEmail(request.getEmail());

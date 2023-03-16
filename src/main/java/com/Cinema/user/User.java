@@ -2,6 +2,10 @@ package com.Cinema.user;
 
 import com.Cinema.user.userRole.UserRole;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -13,6 +17,10 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "account")
 public class User implements UserDetails {
    @Id
@@ -48,61 +56,6 @@ public class User implements UserDetails {
 
    @Column(name = "isActive")
    private boolean isActive = false;
-
-   public User(Long id, String email, String firstName, String lastName, LocalDate bDate, String phoneNumber, String password, Set<UserRole> roles) {
-      this.id = id;
-      this.email = email;
-      this.firstName = firstName;
-      this.lastName = lastName;
-      this.bDate = bDate;
-      this.phoneNumber = phoneNumber;
-      this.password = password;
-      this.roles = roles;
-   }
-
-   public User() {
-
-   }
-
-   public Long getId() {
-      return id;
-   }
-
-   public String getEmail() {
-      return email;
-   }
-
-   public String getFirstName() {
-      return firstName;
-   }
-
-   public String getLastName() {
-      return lastName;
-   }
-
-   public LocalDate getbDate() {
-      return bDate;
-   }
-
-   public String getPhoneNumber() {
-      return phoneNumber;
-   }
-
-   public String getPassword() {
-      return password;
-   }
-
-   public Set<UserRole> getRoles() {
-      return roles;
-   }
-
-   public boolean isActive() {
-      return isActive;
-   }
-
-   public void setActive(boolean active) {
-      isActive = active;
-   }
 
    @Override
    public Collection<? extends GrantedAuthority> getAuthorities() {

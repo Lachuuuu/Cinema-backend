@@ -2,8 +2,16 @@ package com.Cinema.user.userRole;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 @Table(name = "role")
 public class UserRole {
    @Id
@@ -14,20 +22,4 @@ public class UserRole {
    @Column(name = "name", length = 20)
    @NotBlank
    private String name;
-
-   public UserRole() {
-   }
-
-   public UserRole(Long id, String name) {
-      this.id = id;
-      this.name = name;
-   }
-
-   public Long getId() {
-      return id;
-   }
-
-   public String getName() {
-      return name;
-   }
 }
