@@ -7,7 +7,6 @@ import com.Cinema.security.auth.verification.EmailConfirmationService;
 import com.Cinema.user.User;
 import com.google.gson.Gson;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -25,15 +24,10 @@ public class AuthenticationController {
 
    @PostMapping(value = "/register", consumes = MediaType.APPLICATION_JSON_VALUE)
    public ResponseEntity<?> register(
-         @Valid @RequestBody RegisterRequest request
-   ) {
-      User user;
-      try {
-         user = authenticationService.register(request);
-      } catch (BadRequestException e) {
-         return ResponseEntity.badRequest().body(gson.toJson(e.getMessage()));
-      }
-      emailConfirmationService.sendEmail(user);
+         @RequestBody RegisterRequest request
+   ) throws BadRequestException {
+      final User user = authenticationService.register(request);
+      if (user != null) emailConfirmationService.sendEmail(user);
       return ResponseEntity.ok(gson.toJson("Verify email by the link sent on your email address"));
    }
 
@@ -48,5 +42,10 @@ public class AuthenticationController {
    @GetMapping(value = "/confirm-account", produces = MediaType.APPLICATION_JSON_VALUE)
    public ResponseEntity<?> confirmUserAccount(@RequestParam("token") String confirmationToken) {
       return emailConfirmationService.confirmEmail(confirmationToken);
+   }
+
+   @ExceptionHandler({BadRequestException.class})
+   public ResponseEntity<String> handleInvalidTopTalentDataException(BadRequestException e) {
+      return ResponseEntity.badRequest().body(gson.toJson(e.getMessage()));
    }
 }
