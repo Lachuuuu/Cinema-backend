@@ -9,7 +9,7 @@ import com.Cinema.user.userRole.UserRole;
 import com.google.gson.Gson;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -17,21 +17,15 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 
 @Service
+@RequiredArgsConstructor
 public class CookieService {
 
-   @Autowired
-   private AuthenticationService authenticationService;
+   private final AuthenticationService authenticationService;
    @Value("${cookie.expiration.time}")
    private int EXPIRATION_TIME;
-
-   @Autowired
-   private UserRepository userRepository;
-
-   @Autowired
-   private UserAssembler userAssembler;
-
-   @Autowired
-   private Gson gson;
+   private final UserRepository userRepository;
+   private final UserAssembler userAssembler;
+   private final Gson gson;
 
    public ResponseEntity<?> createAuthenticationCookies(AuthenticationRequest request, HttpServletResponse response) {
       Optional<User> optionalUser = userRepository.findByEmail(request.getEmail());

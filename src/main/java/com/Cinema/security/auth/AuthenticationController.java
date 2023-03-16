@@ -8,24 +8,20 @@ import com.Cinema.user.User;
 import com.google.gson.Gson;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@AllArgsConstructor
 @RequestMapping("/auth")
 public class AuthenticationController {
 
-   @Autowired
-   private AuthenticationService authenticationService;
-   @Autowired
-   private CookieService cookieService;
-   @Autowired
-   private EmailConfirmationService emailConfirmationService;
-
-   @Autowired
-   private Gson gson;
+   private final AuthenticationService authenticationService;
+   private final CookieService cookieService;
+   private final EmailConfirmationService emailConfirmationService;
+   private final Gson gson;
 
    @PostMapping(value = "/register", consumes = MediaType.APPLICATION_JSON_VALUE)
    public ResponseEntity<?> register(

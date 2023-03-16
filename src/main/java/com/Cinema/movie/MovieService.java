@@ -3,19 +3,18 @@ package com.Cinema.movie;
 import com.Cinema.movie.genre.GenreRepository;
 import com.Cinema.movie.request.NewMovieRequest;
 import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Base64;
 
 @Service
+@AllArgsConstructor
 @Transactional
 public class MovieService {
-   @Autowired
-   GenreRepository genreRepository;
+   private final GenreRepository genreRepository;
 
-   @Autowired
-   MovieRepository movieRepository;
+   private final MovieRepository movieRepository;
 
    public Movie addMovie(NewMovieRequest request) {
       Movie movie = new Movie(

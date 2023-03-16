@@ -3,7 +3,7 @@ package com.Cinema.movie;
 import com.Cinema.movie.dto.MovieDto;
 import com.Cinema.movie.request.NewMovieRequest;
 import com.google.gson.Gson;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,18 +12,14 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
+@AllArgsConstructor
 @RequestMapping("/movie")
 public class MovieController {
 
-   @Autowired
-   private MovieService movieService;
-   @Autowired
-   private Gson gson;
-   @Autowired
-   private MovieRepository movieRepository;
-
-   @Autowired
-   private MovieAssembler movieAssembler;
+   private final MovieService movieService;
+   private final Gson gson;
+   private final MovieRepository movieRepository;
+   private final MovieAssembler movieAssembler;
 
    @PostMapping(value = "/add", consumes = MediaType.APPLICATION_JSON_VALUE)
    public ResponseEntity<?> addMovie(@RequestBody NewMovieRequest request) {

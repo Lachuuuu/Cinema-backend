@@ -9,7 +9,7 @@ import com.Cinema.user.UserRepository;
 import com.Cinema.user.userRole.UserRole;
 import com.Cinema.user.userRole.UserRoleRepository;
 import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -19,23 +19,19 @@ import java.time.LocalDateTime;
 import java.util.Set;
 
 @Service
+@AllArgsConstructor
 @Transactional
 public class AuthenticationService {
 
-   @Autowired
-   private UserRepository userRepository;
+   private final UserRepository userRepository;
 
-   @Autowired
-   private UserRoleRepository userRoleRepository;
+   private final UserRoleRepository userRoleRepository;
 
-   @Autowired
-   private JwtService jwtService;
+   private final JwtService jwtService;
 
-   @Autowired
-   private AuthenticationManager authenticationManager;
+   private final AuthenticationManager authenticationManager;
 
-   @Autowired
-   private PasswordEncoder passwordEncoder;
+   private final PasswordEncoder passwordEncoder;
 
    public User register(RegisterRequest request) throws BadRequestException {
       String validation = validateRegisterRequest(request);
