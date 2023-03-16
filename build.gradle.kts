@@ -28,6 +28,8 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-mail:3.0.4")
     implementation("jakarta.mail:jakarta.mail-api:2.1.1")
     implementation("com.google.code.gson:gson:2.10.1")
+    implementation("org.hibernate:hibernate-validator:8.0.0.Final")
+    implementation("jakarta.validation:jakarta.validation-api:3.0.2")
     developmentOnly("org.springframework.boot:spring-boot-devtools")
     runtimeOnly("org.postgresql:postgresql")
     runtimeOnly("io.jsonwebtoken:jjwt-impl:0.11.5")
