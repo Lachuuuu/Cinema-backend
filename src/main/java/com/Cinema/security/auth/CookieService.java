@@ -8,8 +8,9 @@ import com.Cinema.user.dto.UserDto;
 import com.Cinema.user.userRole.UserRole;
 import com.google.gson.Gson;
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -17,21 +18,15 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 
 @Service
+@RequiredArgsConstructor
 public class CookieService {
 
-   @Autowired
-   private AuthenticationService authenticationService;
+   private final AuthenticationService authenticationService;
    @Value("${cookie.expiration.time}")
    private int EXPIRATION_TIME;
-
-   @Autowired
-   private UserRepository userRepository;
-
-   @Autowired
-   private UserAssembler userAssembler;
-
-   @Autowired
-   private Gson gson;
+   private final UserRepository userRepository;
+   private final UserAssembler userAssembler;
+   private final Gson gson;
 
    public ResponseEntity<?> createAuthenticationCookies(AuthenticationRequest request, HttpServletResponse response) {
       Optional<User> optionalUser = userRepository.findByEmail(request.getEmail());
@@ -50,6 +45,18 @@ public class CookieService {
          return ResponseEntity.ok(gson.toJson("Successfully Authenticated"));
       }
       return ResponseEntity.badRequest().body(gson.toJson("Authentication Failed"));
+   }
+
+   public ResponseEntity<?> removeCookies(HttpServletResponse response, HttpServletRequest request) {
+      final Cookie[] cookies = request.getCookies();
+      Arrays.stream(cookies).forEach(cookie -> {
+         cookie.setMaxAge(0);
+         cookie.setValue("");
+         cookie.setPath("/");
+         cookie.setDomain(null);
+         response.addCookie(cookie);
+      });
+      return ResponseEntity.ok().body(gson.toJson("Successfully logged out"));
    }
 
    private List<Cookie> createUserCookies(User user) {

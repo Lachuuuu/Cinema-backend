@@ -1,8 +1,16 @@
 package com.Cinema.user;
 
+import com.Cinema.Validation.interfaces.CorrectRegisterDate;
 import com.Cinema.user.userRole.UserRole;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -14,6 +22,10 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "account")
 public class User implements UserDetails {
    @Id
@@ -21,90 +33,46 @@ public class User implements UserDetails {
    @Column(name = "id", nullable = false)
    private Long id;
 
+   @Email(regexp = "[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,3}", message = "wrong email address")
    @Column(name = "email", unique = true)
    private String email;
 
+   @NotBlank(message = "first name cannot be empty")
+   @Size(min = 2, message = "first name should contain atleast 2 signs")
    @Column(name = "firstName")
    private String firstName;
 
+   @NotBlank(message = "last name cannot be empty")
+   @Size(min = 2, message = "last name should contain atleast 2 signs")
    @Column(name = "lastName")
    private String lastName;
 
-   @Column(name = "birthDate")
    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-   private LocalDate bDate;
+   @NotNull(message = "birth date cannot be empty")
+   @Column(name = "birthDate")
+   @CorrectRegisterDate
+   private LocalDate birthDate;
 
+   @NotBlank(message = "phone number cannot be empty")
+   @Size(min = 9, max = 9, message = "invalid length of phone number")
    @Column(name = "phoneNumber", length = 9, unique = true)
    private String phoneNumber;
 
+
    @Column(name = "password")
-   @Size(min = 6, message = "haslo nie jest poprawne powinno miec przynajmniej 6 znakow")
    private String password;
 
-   @Column(name = "role")
    @ManyToMany(fetch = FetchType.EAGER)
+   @NotNull
    @JoinTable(name = "account_roles",
          joinColumns = @JoinColumn(name = "account_id"),
          inverseJoinColumns = @JoinColumn(name = "role_id"))
+   @Column(name = "role")
    private Set<UserRole> roles = new HashSet<>();
 
+   @NotNull
    @Column(name = "isActive")
    private boolean isActive = false;
-
-   public User(Long id, String email, String firstName, String lastName, LocalDate bDate, String phoneNumber, String password, Set<UserRole> roles) {
-      this.id = id;
-      this.email = email;
-      this.firstName = firstName;
-      this.lastName = lastName;
-      this.bDate = bDate;
-      this.phoneNumber = phoneNumber;
-      this.password = password;
-      this.roles = roles;
-   }
-
-   public User() {
-
-   }
-
-   public Long getId() {
-      return id;
-   }
-
-   public String getEmail() {
-      return email;
-   }
-
-   public String getFirstName() {
-      return firstName;
-   }
-
-   public String getLastName() {
-      return lastName;
-   }
-
-   public LocalDate getbDate() {
-      return bDate;
-   }
-
-   public String getPhoneNumber() {
-      return phoneNumber;
-   }
-
-   public String getPassword() {
-      return password;
-   }
-
-   public Set<UserRole> getRoles() {
-      return roles;
-   }
-
-   public boolean isActive() {
-      return isActive;
-   }
-
-   public void setActive(boolean active) {
-      isActive = active;
-   }
 
    @Override
    public Collection<? extends GrantedAuthority> getAuthorities() {

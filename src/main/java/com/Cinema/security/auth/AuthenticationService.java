@@ -9,50 +9,54 @@ import com.Cinema.user.UserRepository;
 import com.Cinema.user.userRole.UserRole;
 import com.Cinema.user.userRole.UserRoleRepository;
 import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validator;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.Set;
 
 @Service
+@RequiredArgsConstructor
 @Transactional
 public class AuthenticationService {
 
-   @Autowired
-   private UserRepository userRepository;
+   private final UserRepository userRepository;
 
-   @Autowired
-   private UserRoleRepository userRoleRepository;
+   private final UserRoleRepository userRoleRepository;
 
-   @Autowired
-   private JwtService jwtService;
+   private final JwtService jwtService;
 
-   @Autowired
-   private AuthenticationManager authenticationManager;
+   private final AuthenticationManager authenticationManager;
 
-   @Autowired
-   private PasswordEncoder passwordEncoder;
+   private final PasswordEncoder passwordEncoder;
+
+   private final Validator validator;
 
    public User register(RegisterRequest request) throws BadRequestException {
-      String validation = validateRegisterRequest(request);
-      if (validation != null) throw new BadRequestException(validation);
-
-      UserRole userRole = userRoleRepository.findByName("USER").orElse(null);
-
-      User user = new User(null,
+      final UserRole userRole = userRoleRepository.findByName("USER").orElse(null);
+      final User user = new User(null,
             request.getEmail(),
             request.getFirstName(),
             request.getLastName(),
-            request.getbDate(),
+            request.getBirthDate(),
             request.getPhoneNumber(),
             passwordEncoder.encode(request.getPassword()),
-            Set.of(userRole));
-      userRepository.save(user);
+            Set.of(userRole),
+            false);
 
+      final String unique = checkIfRequestIsUnique(request);
+      if (unique != null) throw new BadRequestException(unique);
+
+      final Set<ConstraintViolation<User>> constraints = validator.validate(user);
+      if (!constraints.isEmpty()) throw new BadRequestException(constraints.iterator().next().getMessage());
+      final Set<ConstraintViolation<RegisterRequest>> constraintsDTO = validator.validate(request);
+      if (!constraintsDTO.isEmpty()) throw new BadRequestException(constraintsDTO.iterator().next().getMessage());
+
+      userRepository.save(user);
       return user;
    }
 
@@ -62,24 +66,15 @@ public class AuthenticationService {
             request.getPassword()
       ));
 
-      User user = userRepository.findByEmail(request.getEmail()).orElseThrow();
+      final User user = userRepository.findByEmail(request.getEmail()).orElseThrow();
 
-      var jwtToken = jwtService.generateToken(user);
-      return jwtToken;
+      return jwtService.generateToken(user);
    }
 
-   private String validateRegisterRequest(RegisterRequest request) {
-      if (!request.getbDate().atStartOfDay().isBefore(LocalDateTime.now())) return "wrong birth date";
+   private String checkIfRequestIsUnique(RegisterRequest request) {
 
-      if (!request.getEmail().matches("[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,3}")) return "wrong email address";
-      Boolean user = userRepository.existsByEmail(request.getEmail());
-      if (user) return "email is taken";
-
-      if (request.getPhoneNumber().length() != 9) return "wrong length of phone number";
-      user = userRepository.existsByPhoneNumber(request.getPhoneNumber());
-      if (user) return "phone number is taken";
-
-      if (request.getPassword().length() < 4) return "too short password, password should have atleast 4 signs";
+      if (userRepository.existsByEmail(request.getEmail())) return "email is taken";
+      if (userRepository.existsByPhoneNumber(request.getPhoneNumber())) return "phone number is taken";
 
       return null;
    }

@@ -1,4 +1,4 @@
-package com.Cinema.user.userRole;
+package com.Cinema.movie.genre;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -12,8 +12,9 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "role")
-public class UserRole {
+@Table(name = "genre")
+public class Genre {
+
    @Id
    @GeneratedValue(strategy = GenerationType.IDENTITY)
    @Column(name = "id", nullable = false)
