@@ -8,6 +8,7 @@ import com.Cinema.user.dto.UserDto;
 import com.Cinema.user.userRole.UserRole;
 import com.google.gson.Gson;
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -44,6 +45,18 @@ public class CookieService {
          return ResponseEntity.ok(gson.toJson("Successfully Authenticated"));
       }
       return ResponseEntity.badRequest().body(gson.toJson("Authentication Failed"));
+   }
+
+   public ResponseEntity<?> removeCookies(HttpServletResponse response, HttpServletRequest request) {
+      final Cookie[] cookies = request.getCookies();
+      Arrays.stream(cookies).forEach(cookie -> {
+         cookie.setMaxAge(0);
+         cookie.setValue("");
+         cookie.setPath("/");
+         cookie.setDomain(null);
+         response.addCookie(cookie);
+      });
+      return ResponseEntity.ok().body(gson.toJson("Successfully logged out"));
    }
 
    private List<Cookie> createUserCookies(User user) {

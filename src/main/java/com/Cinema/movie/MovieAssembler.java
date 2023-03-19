@@ -12,6 +12,7 @@ public class MovieAssembler {
 
    public MovieDto toMovieDto(Movie movie) {
       return new MovieDto(
+            movie.getId(),
             movie.getName(),
             movie.getDescription(),
             movie.getDurationMin(),

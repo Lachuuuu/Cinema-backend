@@ -6,6 +6,7 @@ import com.Cinema.security.auth.request.RegisterRequest;
 import com.Cinema.security.auth.verification.EmailConfirmationService;
 import com.Cinema.user.User;
 import com.google.gson.Gson;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.http.MediaType;
@@ -42,6 +43,11 @@ public class AuthenticationController {
    @GetMapping(value = "/confirm-account", produces = MediaType.APPLICATION_JSON_VALUE)
    public ResponseEntity<?> confirmUserAccount(@RequestParam("token") String confirmationToken) {
       return emailConfirmationService.confirmEmail(confirmationToken);
+   }
+
+   @GetMapping(value = "/logout")
+   public ResponseEntity<?> logout(HttpServletResponse response, HttpServletRequest request) {
+      return cookieService.removeCookies(response, request);
    }
 
    @ExceptionHandler({BadRequestException.class})
