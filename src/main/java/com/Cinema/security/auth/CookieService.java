@@ -49,7 +49,7 @@ public class CookieService {
 
    public ResponseEntity<?> removeCookies(HttpServletResponse response, HttpServletRequest request) {
       final Cookie[] cookies = request.getCookies();
-      Arrays.stream(cookies).forEach(cookie -> {
+      if (cookies != null) Arrays.stream(cookies).forEach(cookie -> {
          cookie.setMaxAge(0);
          cookie.setValue("");
          cookie.setPath("/");
@@ -64,12 +64,7 @@ public class CookieService {
       HashMap<String, String> userCookies = new HashMap<>();
       UserDto userDto = userAssembler.toUserDto(user);
 
-      //userCookies.put("bDate", userDto.getbDate().toString());
-      //userCookies.put("email", userDto.getEmail());
       userCookies.put("firstName", userDto.getFirstName());
-      //userCookies.put("lastName", userDto.getLastName());
-      //userCookies.put("phoneNumber", userDto.getPhoneNumber());
-      //userCookies.put("roles", parseUserRoles(userDto.getRoles()));
 
       userCookies.forEach((key, value) -> {
          Cookie cookie = new Cookie(key, value);
@@ -84,8 +79,8 @@ public class CookieService {
       return cookies;
    }
 
-   private Cookie createJwtCookie(AuthenticationRequest request) {
-      final Cookie jwtCookie = new Cookie("jwt", authenticationService.authenticate(request));
+   private Cookie createJwtCookie(AuthenticationRequest authRequest) {
+      Cookie jwtCookie = new Cookie("jwt", authenticationService.authenticate(authRequest));
       jwtCookie.setHttpOnly(true);
       jwtCookie.setPath("/");
       jwtCookie.setMaxAge(EXPIRATION_TIME);

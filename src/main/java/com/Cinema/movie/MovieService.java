@@ -25,7 +25,8 @@ public class MovieService {
             request.getPremiereDate(),
             genreRepository.findAllByIdIsIn(request.getGenres()),
             request.getMinAge(),
-            Base64.getDecoder().decode(request.getImage().getBytes())
+            Base64.getDecoder().decode(request.getImage().getBytes()),
+            null
       );
       movieRepository.save(movie);
       return movie;

@@ -23,14 +23,13 @@ public class SecurityConfig {
    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
       http
             .cors()
-            .disable()
+            .and()
             .csrf()
             .disable()
             .authorizeHttpRequests()
-            .requestMatchers("/auth/**", "/movie/**")
-            .permitAll()
-            .anyRequest()
-            .authenticated()
+            .requestMatchers("/auth/**", "/movie/**").permitAll()
+            .requestMatchers("/user/**").hasAuthority("USER")
+            .anyRequest().authenticated()
             .and()
             .sessionManagement()
             .sessionCreationPolicy(SessionCreationPolicy.STATELESS)

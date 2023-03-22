@@ -19,7 +19,8 @@ public class MovieAssembler {
             convertDate(movie.getPremiereDate()),
             movie.getGenres(),
             movie.getMinAge(),
-            "data:image/jpeg;base64," + Base64.encodeBase64String(movie.getImage())
+            "data:image/jpeg;base64," + Base64.encodeBase64String(movie.getImage()),
+            movie.getShowings()
       );
    }
 
