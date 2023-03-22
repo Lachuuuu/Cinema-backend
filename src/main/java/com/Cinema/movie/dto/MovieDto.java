@@ -1,6 +1,7 @@
 package com.Cinema.movie.dto;
 
 import com.Cinema.movie.genre.Genre;
+import com.Cinema.showing.Showing;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,7 +15,7 @@ import java.util.Set;
 @NoArgsConstructor
 public class MovieDto {
    private Long id;
-   
+
    private String name;
 
    private String description;
@@ -28,4 +29,6 @@ public class MovieDto {
    private Long minAge;
 
    private String image;
+
+   private Set<Showing> showings;
 }

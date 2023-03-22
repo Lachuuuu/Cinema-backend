@@ -29,18 +29,20 @@ public class MovieController {
    }
 
    @GetMapping(value = "/{movieId}", produces = MediaType.APPLICATION_JSON_VALUE)
-   public ResponseEntity<?> getMovieById(@PathVariable Long movieId) {
+   public ResponseEntity<MovieDto> getMovieById(@PathVariable Long movieId) {
       Movie movie = movieRepository.findById(movieId).orElse(null);
-      if (movie != null) return ResponseEntity.ok(gson.toJson(movieAssembler.toMovieDto(movie)));
-      else return ResponseEntity.badRequest().body(gson.toJson("Wrong movie id"));
+      if (movie != null) return ResponseEntity.ok(movieAssembler.toMovieDto(movie));
+      else
+         return ResponseEntity.badRequest().body(null); //tutaj powinien byc error handling na wrong movie id zamien potem
    }
 
    @GetMapping(value = "/all", produces = MediaType.APPLICATION_JSON_VALUE)
-   public ResponseEntity<?> getAllMovies() {
+   public ResponseEntity<List<MovieDto>> getAllMovies() {
       List<Movie> movies = movieRepository.findAll();
       List<MovieDto> result = movies.stream().map(it -> movieAssembler.toMovieDto(it)).collect(Collectors.toList());
-      if (result != null) return ResponseEntity.ok(gson.toJson(result));
-      else return ResponseEntity.badRequest().body(gson.toJson("Cannot get all movies"));
+      if (result != null) return ResponseEntity.ok(result);
+      else
+         return ResponseEntity.badRequest().body(null); //tutaj powinien byc error handling na wrong movie id zamien potem
    }
 
 }
