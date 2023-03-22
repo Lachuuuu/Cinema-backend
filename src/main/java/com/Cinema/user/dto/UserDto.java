@@ -20,7 +20,7 @@ public class UserDto {
 
    private String lastName;
 
-   private LocalDate bDate;
+   private LocalDate birthDate;
 
    private String phoneNumber;
 

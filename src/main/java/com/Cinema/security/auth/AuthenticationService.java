@@ -6,6 +6,7 @@ import com.Cinema.security.auth.request.RegisterRequest;
 import com.Cinema.security.jwt.JwtService;
 import com.Cinema.user.User;
 import com.Cinema.user.UserRepository;
+import com.Cinema.user.UserService;
 import com.Cinema.user.userRole.UserRole;
 import com.Cinema.user.userRole.UserRoleRepository;
 import jakarta.transaction.Transactional;
@@ -36,6 +37,8 @@ public class AuthenticationService {
 
    private final Validator validator;
 
+   private final UserService userService;
+
    public User register(RegisterRequest request) throws BadRequestException {
       final UserRole userRole = userRoleRepository.findByName("USER").orElse(null);
       final User user = new User(null,
@@ -48,7 +51,7 @@ public class AuthenticationService {
             Set.of(userRole),
             false);
 
-      final String unique = checkIfRequestIsUnique(request);
+      final String unique = userService.checkIfRequestIsUnique(request);
       if (unique != null) throw new BadRequestException(unique);
 
       final Set<ConstraintViolation<User>> constraints = validator.validate(user);
@@ -69,14 +72,6 @@ public class AuthenticationService {
       final User user = userRepository.findByEmail(request.getEmail()).orElseThrow();
 
       return jwtService.generateToken(user);
-   }
-
-   private String checkIfRequestIsUnique(RegisterRequest request) {
-
-      if (userRepository.existsByEmail(request.getEmail())) return "email is taken";
-      if (userRepository.existsByPhoneNumber(request.getPhoneNumber())) return "phone number is taken";
-
-      return null;
    }
 
 }
