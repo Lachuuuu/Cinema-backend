@@ -4,7 +4,6 @@ import com.Cinema.security.auth.request.AuthenticationRequest;
 import com.Cinema.user.User;
 import com.Cinema.user.UserAssembler;
 import com.Cinema.user.UserRepository;
-import com.Cinema.user.dto.UserDto;
 import com.Cinema.user.userRole.UserRole;
 import com.google.gson.Gson;
 import jakarta.servlet.http.Cookie;
@@ -12,7 +11,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -28,7 +26,7 @@ public class CookieService {
    private final UserAssembler userAssembler;
    private final Gson gson;
 
-   public ResponseEntity<?> createAuthenticationCookies(AuthenticationRequest request, HttpServletResponse response) {
+   public User createAuthenticationCookies(AuthenticationRequest request, HttpServletResponse response) {
       Optional<User> optionalUser = userRepository.findByEmail(request.getEmail());
 
       if (optionalUser.isPresent()) {
@@ -40,14 +38,13 @@ public class CookieService {
          userCookies.forEach(it -> response.addCookie(it));
 
          response.setHeader("Access-Control-Allow-Credentials", String.valueOf(true));
-         // response.setHeader("Access-Control-Allow-Origin", "*");
 
-         return ResponseEntity.ok(gson.toJson("Successfully Authenticated"));
+         return user;
       }
-      return ResponseEntity.badRequest().body(gson.toJson("Authentication Failed"));
+      return null;
    }
 
-   public ResponseEntity<?> removeCookies(HttpServletResponse response, HttpServletRequest request) {
+   public void removeCookies(HttpServletResponse response, HttpServletRequest request) {
       final Cookie[] cookies = request.getCookies();
       if (cookies != null) Arrays.stream(cookies).forEach(cookie -> {
          cookie.setMaxAge(0);
@@ -56,23 +53,19 @@ public class CookieService {
          cookie.setDomain(null);
          response.addCookie(cookie);
       });
-      return ResponseEntity.ok().body(gson.toJson("Successfully logged out"));
    }
 
    private List<Cookie> createUserCookies(User user) {
       List<Cookie> cookies = new ArrayList<>();
       HashMap<String, String> userCookies = new HashMap<>();
-      UserDto userDto = userAssembler.toUserDto(user);
 
-      userCookies.put("firstName", userDto.getFirstName());
+      userCookies.put("userId", user.getId().toString());
 
       userCookies.forEach((key, value) -> {
          Cookie cookie = new Cookie(key, value);
          cookie.setPath("/");
          cookie.setDomain(null);
          cookie.setMaxAge(EXPIRATION_TIME);
-         //cookie.setAttribute("SameSite", "None");
-         //cookie.setSecure(true);
          cookies.add(cookie);
       });
 

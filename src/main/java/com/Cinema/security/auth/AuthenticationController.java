@@ -5,6 +5,8 @@ import com.Cinema.security.auth.request.AuthenticationRequest;
 import com.Cinema.security.auth.request.RegisterRequest;
 import com.Cinema.security.auth.verification.EmailConfirmationService;
 import com.Cinema.user.User;
+import com.Cinema.user.UserAssembler;
+import com.Cinema.user.dto.UserDto;
 import com.google.gson.Gson;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -23,6 +25,8 @@ public class AuthenticationController {
    private final EmailConfirmationService emailConfirmationService;
    private final Gson gson;
 
+   private final UserAssembler userAssembler;
+
    @PostMapping(value = "/register", consumes = MediaType.APPLICATION_JSON_VALUE)
    public ResponseEntity<?> register(
          @RequestBody RegisterRequest request
@@ -33,11 +37,13 @@ public class AuthenticationController {
    }
 
    @PostMapping(value = "/authenticate", consumes = MediaType.APPLICATION_JSON_VALUE)
-   public ResponseEntity<?> auth(
+   public ResponseEntity<UserDto> auth(
          @RequestBody AuthenticationRequest request,
          HttpServletResponse response
    ) {
-      return cookieService.createAuthenticationCookies(request, response);
+      User authenticatedUser = cookieService.createAuthenticationCookies(request, response);
+      if (authenticatedUser == null) return ResponseEntity.badRequest().body(null);
+      return ResponseEntity.ok(userAssembler.toUserDto(authenticatedUser));
    }
 
    @GetMapping(value = "/confirm-account", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -46,8 +52,9 @@ public class AuthenticationController {
    }
 
    @GetMapping(value = "/logout")
-   public ResponseEntity<?> logout(HttpServletResponse response, HttpServletRequest request) {
-      return cookieService.removeCookies(response, request);
+   public ResponseEntity<String> logout(HttpServletResponse response, HttpServletRequest request) {
+      cookieService.removeCookies(response, request);
+      return ResponseEntity.ok(null);
    }
 
    @ExceptionHandler({BadRequestException.class})

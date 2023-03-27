@@ -11,7 +11,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Set;
 
 @Entity
@@ -38,11 +38,10 @@ public class Showing {
    @JoinColumn(name = "hall_id")
    private Hall hall;
 
-   @ManyToMany(fetch = FetchType.EAGER)
-   @JoinTable(name = "showing_reservations",
-         joinColumns = @JoinColumn(name = "showing_id"),
-         inverseJoinColumns = @JoinColumn(name = "rservation_id"))
+   @OneToMany(mappedBy = "showing")
    private Set<Reservation> reservations;
 
-   private LocalDate showingStartTime;
+   private LocalDateTime showingStartTime;
+
+   private String seatsMap;
 }

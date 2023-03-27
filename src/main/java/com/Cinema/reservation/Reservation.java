@@ -1,14 +1,17 @@
 package com.Cinema.reservation;
 
+import com.Cinema.showing.Showing;
 import com.Cinema.user.User;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Entity
@@ -32,9 +35,17 @@ public class Reservation {
    private User user;
 
    @ElementCollection
-   private List<Long> seatId;
+   private List<Long> seatIds;
 
+   @Min(value = 0)
    private Long normal;
 
+   @Min(value = 0)
    private Long discount;
+
+   @Min(value = 0)
+   private BigDecimal totalValue;
+
+   @ManyToOne
+   private Showing showing;
 }

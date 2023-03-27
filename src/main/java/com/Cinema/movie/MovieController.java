@@ -2,6 +2,7 @@ package com.Cinema.movie;
 
 import com.Cinema.movie.dto.MovieDto;
 import com.Cinema.movie.request.NewMovieRequest;
+import com.Cinema.security.auth.exception.BadRequestException;
 import com.google.gson.Gson;
 import lombok.AllArgsConstructor;
 import org.springframework.http.MediaType;
@@ -22,7 +23,7 @@ public class MovieController {
    private final MovieAssembler movieAssembler;
 
    @PostMapping(value = "/add", consumes = MediaType.APPLICATION_JSON_VALUE)
-   public ResponseEntity<?> addMovie(@RequestBody NewMovieRequest request) {
+   public ResponseEntity<String> addMovie(@RequestBody NewMovieRequest request) {
       Movie movie = movieService.addMovie(request);
       if (movie != null) return ResponseEntity.ok(gson.toJson("Movie added successfully"));
       else return ResponseEntity.badRequest().body(gson.toJson("Error occurred while trying to add movie"));
@@ -33,7 +34,7 @@ public class MovieController {
       Movie movie = movieRepository.findById(movieId).orElse(null);
       if (movie != null) return ResponseEntity.ok(movieAssembler.toMovieDto(movie));
       else
-         return ResponseEntity.badRequest().body(null); //tutaj powinien byc error handling na wrong movie id zamien potem
+         return ResponseEntity.badRequest().body(null);
    }
 
    @GetMapping(value = "/all", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -42,7 +43,13 @@ public class MovieController {
       List<MovieDto> result = movies.stream().map(it -> movieAssembler.toMovieDto(it)).collect(Collectors.toList());
       if (result != null) return ResponseEntity.ok(result);
       else
-         return ResponseEntity.badRequest().body(null); //tutaj powinien byc error handling na wrong movie id zamien potem
+         return ResponseEntity.badRequest().body(null);
+   }
+
+   @ExceptionHandler({BadRequestException.class})
+   public ResponseEntity<String> handleInvalidTopTalentDataException(BadRequestException e) {
+      return ResponseEntity.badRequest().body(gson.toJson(e.getMessage()));
    }
 
 }
+
