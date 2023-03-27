@@ -29,8 +29,10 @@ public class UserService {
 
    private final PasswordEncoder passwordEncoder;
 
-   public User getUser(String token) {
-      return userRepository.findByEmail(jwtService.extractUserEmail(token)).orElse(null);
+   public User getUser(String token) throws BadRequestException {
+      User user = userRepository.findByEmail(jwtService.extractUserEmail(token)).orElse(null);
+      if (user == null) throw new BadRequestException("User not found");
+      return user;
    }
 
    public User changeEmail(User user, UpdateEmailRequest updateUserRequest) throws BadRequestException {

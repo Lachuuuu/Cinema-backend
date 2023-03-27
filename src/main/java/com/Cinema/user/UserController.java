@@ -13,8 +13,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -30,85 +28,67 @@ public class UserController {
 
    private final CookieService cookieService;
 
-   private final PasswordEncoder passwordEncoder;
-
    @GetMapping(value = "/userByToken", produces = MediaType.APPLICATION_JSON_VALUE)
-   public ResponseEntity<?> getUser(
+   public ResponseEntity<UserDto> getUser(
          @CookieValue(name = "jwt") String token
-   ) {
+   ) throws BadRequestException {
       User user = userService.getUser(token);
-      if (user == null) return ResponseEntity.badRequest().body(null);
-
       UserDto userDto = userAssembler.toUserDto(user);
       return ResponseEntity.ok(userDto);
    }
 
    @PostMapping(value = "/change/email", consumes = MediaType.APPLICATION_JSON_VALUE)
-   public ResponseEntity<?> changeEmail(
+   public ResponseEntity<String> changeEmail(
          @RequestBody UpdateEmailRequest updateEmailRequest,
          @CookieValue(name = "jwt") String token,
          HttpServletResponse response,
          HttpServletRequest request
-   ) throws BadRequestException, UsernameNotFoundException {
+   ) throws BadRequestException {
       User user = userService.getUser(token);
-      if (userService.changeEmail(user, updateEmailRequest) == null)
-         throw new BadRequestException("could not change email");
-      return cookieService.removeCookies(response, request);
+      userService.changeEmail(user, updateEmailRequest);
+      cookieService.removeCookies(response, request);
+      return ResponseEntity.ok(gson.toJson("Email changed successfully, you will be directed to login page in 5 seconds"));
    }
 
    @PostMapping(value = "/change/password", consumes = MediaType.APPLICATION_JSON_VALUE)
-   public ResponseEntity<?> changePassword(
+   public ResponseEntity<String> changePassword(
          @RequestBody UpdatePasswordRequest updatePasswordRequest,
-         @CookieValue(name = "jwt") String token,
-         HttpServletResponse response,
-         HttpServletRequest request
-   ) throws BadRequestException, UsernameNotFoundException {
+         @CookieValue(name = "jwt") String token
+   ) throws BadRequestException {
       User user = userService.getUser(token);
-      if (userService.changePassword(user, updatePasswordRequest) == null)
-         throw new BadRequestException("could not change password");
+      userService.changePassword(user, updatePasswordRequest);
       return ResponseEntity.ok().body(gson.toJson("Password changed successfully"));
    }
 
    @PostMapping(value = "/change/first_name", consumes = MediaType.APPLICATION_JSON_VALUE)
-   public ResponseEntity<?> changeFirstName(
+   public ResponseEntity<UserDto> changeFirstName(
          @RequestBody UpdateNameRequest updateNameRequest,
-         @CookieValue(name = "jwt") String token,
-         HttpServletResponse response,
-         HttpServletRequest request
-   ) throws BadRequestException, UsernameNotFoundException {
-      User user = userService.getUser(token);
-      if (userService.changeFirstName(user, updateNameRequest) == null)
-         throw new BadRequestException("could not change first name");
-      return ResponseEntity.ok().body(gson.toJson("first name changed successfully"));
+         @CookieValue(name = "jwt") String token
+   ) throws BadRequestException {
+      User user = userService.changeFirstName(userService.getUser(token), updateNameRequest);
+      return ResponseEntity.ok().body(userAssembler.toUserDto(user));
    }
 
    @PostMapping(value = "/change/last_name", consumes = MediaType.APPLICATION_JSON_VALUE)
-   public ResponseEntity<?> changeLastName(
+   public ResponseEntity<UserDto> changeLastName(
          @RequestBody UpdateNameRequest updateNameRequest,
-         @CookieValue(name = "jwt") String token,
-         HttpServletResponse response,
-         HttpServletRequest request
-   ) throws BadRequestException, UsernameNotFoundException {
-      User user = userService.getUser(token);
-      if (userService.changeLastName(user, updateNameRequest) == null)
-         throw new BadRequestException("could not change last name");
-      return ResponseEntity.ok().body(gson.toJson("last name changed successfully"));
+         @CookieValue(name = "jwt") String token
+   ) throws BadRequestException {
+      User user = userService.changeLastName(userService.getUser(token), updateNameRequest);
+      return ResponseEntity.ok().body(userAssembler.toUserDto(user));
    }
 
    @PostMapping(value = "/change/phone", consumes = MediaType.APPLICATION_JSON_VALUE)
-   public ResponseEntity<?> changeLastName(
+   public ResponseEntity<String> changeLastName(
          @RequestBody UpdatePhoneNumberRequest updatePhoneNumberRequest,
-         @CookieValue(name = "jwt") String token,
-         HttpServletResponse response,
-         HttpServletRequest request
-   ) throws BadRequestException, UsernameNotFoundException {
+         @CookieValue(name = "jwt") String token
+   ) throws BadRequestException {
       User user = userService.getUser(token);
-      if (userService.changePhoneNumber(user, updatePhoneNumberRequest) == null)
-         throw new BadRequestException("could not change phone number");
+      userService.changePhoneNumber(user, updatePhoneNumberRequest);
       return ResponseEntity.ok().body(gson.toJson("phone number changed successfully"));
    }
 
-   @ExceptionHandler({BadRequestException.class, UsernameNotFoundException.class})
+   @ExceptionHandler({BadRequestException.class})
    public ResponseEntity<String> handleInvalidTopTalentDataException(Exception e) {
       return ResponseEntity.badRequest().body(gson.toJson(e.getMessage()));
    }

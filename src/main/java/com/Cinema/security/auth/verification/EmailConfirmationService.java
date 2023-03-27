@@ -4,7 +4,7 @@ import com.Cinema.user.User;
 import com.Cinema.user.UserRepository;
 import com.google.gson.Gson;
 import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
@@ -17,19 +17,18 @@ import java.util.UUID;
 
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class EmailConfirmationService {
 
-   @Autowired
-   private JavaMailSender javaMailSender;
-   @Autowired
-   private EmailConfirmationRepository emailConfirmationRepository;
-   @Autowired
-   private UserRepository userRepository;
+   private final JavaMailSender javaMailSender;
+
+   private final EmailConfirmationRepository emailConfirmationRepository;
+
+   private final UserRepository userRepository;
    @Value("${frontend.url}")
    private String frontendUrl;
 
-   @Autowired
-   private Gson gson;
+   private final Gson gson;
 
 
    @Async

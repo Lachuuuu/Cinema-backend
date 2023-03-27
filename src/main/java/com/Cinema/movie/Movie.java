@@ -3,7 +3,6 @@ package com.Cinema.movie;
 import com.Cinema.movie.genre.Genre;
 import com.Cinema.showing.Showing;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -60,6 +59,5 @@ public class Movie {
    private byte[] image;
 
    @OneToMany(fetch = FetchType.EAGER, mappedBy = "movie")
-   @JsonIgnore
    private Set<Showing> showings;
 }

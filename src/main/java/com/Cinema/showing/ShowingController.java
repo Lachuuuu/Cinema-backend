@@ -6,5 +6,5 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping(name = "/showing")
 public class ShowingController {
-   //dodaj do security
+
 }
