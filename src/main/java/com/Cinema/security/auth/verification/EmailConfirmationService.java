@@ -1,12 +1,12 @@
 package com.Cinema.security.auth.verification;
 
+import com.Cinema.security.auth.exception.BadRequestException;
 import com.Cinema.user.User;
 import com.Cinema.user.UserRepository;
 import com.google.gson.Gson;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.scheduling.annotation.Async;
@@ -46,7 +46,7 @@ public class EmailConfirmationService {
       javaMailSender.send(mailMessage);
    }
 
-   public ResponseEntity<?> confirmEmail(String confirmationToken) {
+   public void confirmEmail(String confirmationToken) throws BadRequestException {
 
       EmailConfirmationToken token = emailConfirmationRepository.findByConfirmationToken(confirmationToken);
 
@@ -55,9 +55,7 @@ public class EmailConfirmationService {
          user.setActive(true);
          userRepository.save(user);
          emailConfirmationRepository.delete(token);
-         return ResponseEntity.ok(gson.toJson("Email verified successfully!"));
-      }
-      return ResponseEntity.badRequest().body(gson.toJson("Couldn't verify email"));
+      } else throw new BadRequestException("Couldn't verify email");
    }
 
 

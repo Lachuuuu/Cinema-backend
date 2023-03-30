@@ -2,10 +2,8 @@ package com.Cinema.security.auth;
 
 import com.Cinema.security.auth.request.AuthenticationRequest;
 import com.Cinema.user.User;
-import com.Cinema.user.UserAssembler;
 import com.Cinema.user.UserRepository;
 import com.Cinema.user.userRole.UserRole;
-import com.google.gson.Gson;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -23,8 +21,6 @@ public class CookieService {
    @Value("${cookie.expiration.time}")
    private int EXPIRATION_TIME;
    private final UserRepository userRepository;
-   private final UserAssembler userAssembler;
-   private final Gson gson;
 
    public User createAuthenticationCookies(AuthenticationRequest request, HttpServletResponse response) {
       Optional<User> optionalUser = userRepository.findByEmail(request.getEmail());
