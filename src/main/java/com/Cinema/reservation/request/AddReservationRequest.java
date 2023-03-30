@@ -12,11 +12,8 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class AddReservationRequest {
-
    private List<Long> seatIds;
    private Long normal;
-
    private Long discount;
-
    private Long showingId;
 }
