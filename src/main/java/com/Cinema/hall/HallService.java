@@ -8,6 +8,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -27,7 +28,7 @@ public class HallService {
       } else throw new BadRequestException("Seats map cannot be empty");
    }
 
-   public void removeHall(Long hallId) throws BadRequestException {
+   public List<Hall> removeHall(Long hallId) throws BadRequestException {
       Hall hall = hallRepository.findById(hallId)
             .orElseThrow(() -> new BadRequestException("Hall not found"));
 
@@ -36,10 +37,11 @@ public class HallService {
             .collect(Collectors.toSet());
       if (showings.isEmpty()) hallRepository.delete(hall);
       else throw new BadRequestException("There are showings in the hall, delete them first");
+      return hallRepository.findAll();
    }
 
-   public Set<Hall> getAllHalls() {
-      Set<Hall> halls = hallRepository.findAll().stream().collect(Collectors.toSet());
+   public List<Hall> getAllHalls() {
+      List<Hall> halls = hallRepository.findAll();
       return halls;
    }
 

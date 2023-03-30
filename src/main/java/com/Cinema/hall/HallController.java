@@ -8,7 +8,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Set;
+import java.util.List;
 
 @RestController
 @AllArgsConstructor
@@ -19,21 +19,21 @@ public class HallController {
    private final Gson gson;
 
    @GetMapping(value = "/admin/all", produces = MediaType.APPLICATION_JSON_VALUE)
-   public ResponseEntity<Set<Hall>> getAllHalls() {
-      Set<Hall> halls = hallService.getAllHalls();
+   public ResponseEntity<List<Hall>> getAllHalls() {
+      List<Hall> halls = hallService.getAllHalls();
       return ResponseEntity.ok().body(halls);
    }
 
    @PostMapping(value = "/admin/add")
    public ResponseEntity addHall(@RequestBody AddHallRequest addHallRequest) throws BadRequestException {
       Hall hall = hallService.addHall(addHallRequest);
-      return ResponseEntity.ok(null);
+      return ResponseEntity.ok(hall);
    }
 
    @DeleteMapping(value = "/admin/remove/{hallId}")
    public ResponseEntity removeHall(@PathVariable Long hallId) throws BadRequestException {
-      hallService.removeHall(hallId);
-      return ResponseEntity.ok(null);
+      List<Hall> halls = hallService.removeHall(hallId);
+      return ResponseEntity.ok(halls);
    }
 
    @ExceptionHandler({BadRequestException.class})
