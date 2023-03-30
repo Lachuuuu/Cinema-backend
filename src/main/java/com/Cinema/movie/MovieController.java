@@ -38,7 +38,7 @@ public class MovieController {
    }
 
    @DeleteMapping(value = "/admin/remove/{movieId}")
-   public ResponseEntity removeMovie(@PathVariable Long movieId) throws BadRequestException {
+   public ResponseEntity<List<MovieDto>> removeMovie(@PathVariable Long movieId) throws BadRequestException {
       List<MovieDto> movies = movieService.removeMovie(movieId);
       return ResponseEntity.ok(movies);
    }

@@ -25,13 +25,13 @@ public class GenreController {
    }
 
    @PostMapping(value = "/admin/add")
-   public ResponseEntity addNewGenre(@RequestParam String name) throws BadRequestException {
+   public ResponseEntity<Genre> addNewGenre(@RequestParam String name) throws BadRequestException {
       Genre genre = genreService.addGenre(name);
       return ResponseEntity.ok(genre);
    }
 
    @DeleteMapping(value = "/admin/remove")
-   public ResponseEntity removeGenre(@RequestParam Long genreId) throws BadRequestException {
+   public ResponseEntity<List<Genre>> removeGenre(@RequestParam Long genreId) throws BadRequestException {
       List<Genre> genres = genreService.removeGenre(genreId);
       return ResponseEntity.ok(genres);
    }

@@ -25,13 +25,13 @@ public class HallController {
    }
 
    @PostMapping(value = "/admin/add")
-   public ResponseEntity addHall(@RequestBody AddHallRequest addHallRequest) throws BadRequestException {
+   public ResponseEntity<Hall> addHall(@RequestBody AddHallRequest addHallRequest) throws BadRequestException {
       Hall hall = hallService.addHall(addHallRequest);
       return ResponseEntity.ok(hall);
    }
 
    @DeleteMapping(value = "/admin/remove/{hallId}")
-   public ResponseEntity removeHall(@PathVariable Long hallId) throws BadRequestException {
+   public ResponseEntity<List<Hall>> removeHall(@PathVariable Long hallId) throws BadRequestException {
       List<Hall> halls = hallService.removeHall(hallId);
       return ResponseEntity.ok(halls);
    }

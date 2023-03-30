@@ -10,8 +10,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
@@ -22,20 +21,18 @@ public class ShowingController {
 
    private final ShowingService showingService;
 
-   private final ShowingAssembler showingAssembler;
-
    @PostMapping(value = "/admin/add", consumes = MediaType.APPLICATION_JSON_VALUE)
-   public ResponseEntity addShowing(
+   public ResponseEntity<String> addShowing(
          @RequestBody AddShowingRequest addShowingRequest
    ) throws BadRequestException {
       showingService.addShowing(addShowingRequest);
-      return ResponseEntity.ok().body(null);
+      return ResponseEntity.ok().body(gson.toJson("Showing added successfully"));
    }
 
    @PutMapping(value = "/admin/remove/{showingId}")
-   public ResponseEntity removeShowing(@PathVariable Long showingId) throws BadRequestException {
-      showingService.removeShowing(showingId);
-      return ResponseEntity.ok().body(null);
+   public ResponseEntity<List<Showing>> removeShowing(@PathVariable Long showingId) throws BadRequestException {
+      List<Showing> showings = showingService.removeShowing(showingId);
+      return ResponseEntity.ok().body(showings);
    }
 
    @PutMapping(value = "/admin/update")
@@ -45,11 +42,8 @@ public class ShowingController {
    }
 
    @GetMapping(value = "/admin/all")
-   public ResponseEntity<Set<ShowingDto>> getAllShowings() {
-      Set<ShowingDto> showings = showingService.getAllShowings().stream()
-            .filter(it -> it.getIsActive())
-            .map(it -> showingAssembler.toShowingDto(it))
-            .collect(Collectors.toSet());
+   public ResponseEntity<List<ShowingDto>> getAllShowings() {
+      List<ShowingDto> showings = showingService.getAllShowings();
       return ResponseEntity.ok().body(showings);
    }
 

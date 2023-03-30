@@ -5,6 +5,7 @@ import com.Cinema.hall.HallRepository;
 import com.Cinema.movie.Movie;
 import com.Cinema.movie.MovieRepository;
 import com.Cinema.security.auth.exception.BadRequestException;
+import com.Cinema.showing.dto.ShowingDto;
 import com.Cinema.showing.request.AddShowingRequest;
 import com.Cinema.showing.request.UpdateShowingRequest;
 import jakarta.transaction.Transactional;
@@ -12,7 +13,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -23,6 +23,8 @@ public class ShowingService {
    private final ShowingRepository showingRepository;
    private final MovieRepository movieRepository;
    private final HallRepository hallRepository;
+
+   private final ShowingAssembler showingAssembler;
 
    public Showing updateSeatsMap(Showing showing, List<Long> RequestedSeats) throws BadRequestException {
       String showingSeatsMap = showing.getSeatsMap();
@@ -55,7 +57,7 @@ public class ShowingService {
       return showingRepository.save(newShowing);
    }
 
-   public void removeShowing(Long showingId) throws BadRequestException {
+   public List<Showing> removeShowing(Long showingId) throws BadRequestException {
       final Showing showing = showingRepository.findById(showingId)
             .orElseThrow(() -> new BadRequestException("Showing not found"));
       showing.setIsActive(false);
@@ -65,15 +67,19 @@ public class ShowingService {
       } catch (Exception e) {
          throw new BadRequestException("Could not delete showing");
       }
+
+      return showingRepository.findAll();
    }
 
-   public Set<Showing> getAllShowings() {
-      Set<Showing> showings = showingRepository.findAll().stream().collect(Collectors.toSet());
+   public List<ShowingDto> getAllShowings() {
+      final List<ShowingDto> showings = showingRepository.findAllByIsActive(true).stream()
+            .map(it -> showingAssembler.toShowingDto(it))
+            .collect(Collectors.toList());
       return showings;
    }
 
    public Showing updateShowing(UpdateShowingRequest updateShowingRequest) throws BadRequestException {
-      Showing showing = showingRepository.findById(updateShowingRequest.getShowingId())
+      final Showing showing = showingRepository.findById(updateShowingRequest.getShowingId())
             .orElseThrow(() -> new BadRequestException("Showing not found"));
 
       if (updateShowingRequest.getHallId() != null) {
