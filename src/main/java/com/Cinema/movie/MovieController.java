@@ -4,7 +4,7 @@ import com.Cinema.movie.dto.MovieDto;
 import com.Cinema.movie.request.NewMovieRequest;
 import com.Cinema.security.auth.exception.BadRequestException;
 import com.google.gson.Gson;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@AllArgsConstructor
+@RequiredArgsConstructor
 @RequestMapping("/movie")
 public class MovieController {
 
@@ -21,7 +21,7 @@ public class MovieController {
 
    @PostMapping(value = "/admin/add", consumes = MediaType.APPLICATION_JSON_VALUE)
    public ResponseEntity<String> addMovie(@RequestBody NewMovieRequest request) throws BadRequestException {
-      Movie movie = movieService.addMovie(request);
+      movieService.addMovie(request);
       return ResponseEntity.ok(gson.toJson("Movie added successfully"));
    }
 

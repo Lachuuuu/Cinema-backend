@@ -59,7 +59,7 @@ public class MovieService {
       if (showings.isEmpty()) movieRepository.delete(movie);
       else throw new BadRequestException("Showings uses this movie, delete them first");
 
-      List<Movie> movies = movieRepository.findAll();
+      List<Movie> movies = movieRepository.findAllByOrderById();
       List<MovieDto> result = movies.stream().map(it -> movieAssembler.toMovieDto(it)).collect(Collectors.toList());
 
       return result;
@@ -72,7 +72,7 @@ public class MovieService {
    }
 
    public List<MovieDto> findAllMovies() {
-      List<Movie> movies = movieRepository.findAll();
+      List<Movie> movies = movieRepository.findAllByOrderById();
       List<MovieDto> result = movies.stream().map(it -> movieAssembler.toMovieDto(it)).collect(Collectors.toList());
       return result;
    }
