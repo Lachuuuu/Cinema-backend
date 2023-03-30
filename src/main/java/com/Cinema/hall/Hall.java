@@ -3,6 +3,7 @@ package com.Cinema.hall;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -25,4 +26,7 @@ public class Hall {
    @Column(name = "id", nullable = false)
    private Long id;
    private String seatsMap;
+
+   @NotBlank
+   private String name;
 }
