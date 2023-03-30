@@ -1,14 +1,20 @@
 package com.Cinema.movie;
 
 import com.Cinema.movie.dto.MovieDto;
+import com.Cinema.showing.ShowingAssembler;
+import lombok.RequiredArgsConstructor;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class MovieAssembler {
+
+   private final ShowingAssembler showingAssembler;
 
    public MovieDto toMovieDto(Movie movie) {
       return new MovieDto(
@@ -20,7 +26,10 @@ public class MovieAssembler {
             movie.getGenres(),
             movie.getMinAge(),
             "data:image/jpeg;base64," + Base64.encodeBase64String(movie.getImage()),
-            movie.getShowings()
+            movie.getShowings().stream()
+                  .filter(it -> it.getIsActive())
+                  .map(showing -> showingAssembler.toShowingDto(showing))
+                  .collect(Collectors.toSet())
       );
    }
 

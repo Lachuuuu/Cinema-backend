@@ -22,7 +22,7 @@ public class MovieController {
    private final MovieRepository movieRepository;
    private final MovieAssembler movieAssembler;
 
-   @PostMapping(value = "/add", consumes = MediaType.APPLICATION_JSON_VALUE)
+   @PostMapping(value = "/admin/add", consumes = MediaType.APPLICATION_JSON_VALUE)
    public ResponseEntity<String> addMovie(@RequestBody NewMovieRequest request) {
       Movie movie = movieService.addMovie(request);
       if (movie != null) return ResponseEntity.ok(gson.toJson("Movie added successfully"));
@@ -32,8 +32,11 @@ public class MovieController {
    @GetMapping(value = "/{movieId}", produces = MediaType.APPLICATION_JSON_VALUE)
    public ResponseEntity<MovieDto> getMovieById(@PathVariable Long movieId) {
       Movie movie = movieRepository.findById(movieId).orElse(null);
-      if (movie != null) return ResponseEntity.ok(movieAssembler.toMovieDto(movie));
-      else
+
+      if (movie != null) {
+         MovieDto movieDto = movieAssembler.toMovieDto(movie);
+         return ResponseEntity.ok(movieDto);
+      } else
          return ResponseEntity.badRequest().body(null);
    }
 
@@ -44,6 +47,12 @@ public class MovieController {
       if (result != null) return ResponseEntity.ok(result);
       else
          return ResponseEntity.badRequest().body(null);
+   }
+
+   @DeleteMapping(value = "/admin/remove/{movieId}")
+   public ResponseEntity removeMovie(@PathVariable Long movieId) throws BadRequestException {
+      movieService.removeMovie(movieId);
+      return ResponseEntity.ok(null);
    }
 
    @ExceptionHandler({BadRequestException.class})
