@@ -10,7 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @AllArgsConstructor
@@ -19,40 +18,29 @@ public class MovieController {
 
    private final MovieService movieService;
    private final Gson gson;
-   private final MovieRepository movieRepository;
-   private final MovieAssembler movieAssembler;
 
    @PostMapping(value = "/admin/add", consumes = MediaType.APPLICATION_JSON_VALUE)
-   public ResponseEntity<String> addMovie(@RequestBody NewMovieRequest request) {
+   public ResponseEntity<String> addMovie(@RequestBody NewMovieRequest request) throws BadRequestException {
       Movie movie = movieService.addMovie(request);
-      if (movie != null) return ResponseEntity.ok(gson.toJson("Movie added successfully"));
-      else return ResponseEntity.badRequest().body(gson.toJson("Error occurred while trying to add movie"));
+      return ResponseEntity.ok(gson.toJson("Movie added successfully"));
    }
 
    @GetMapping(value = "/{movieId}", produces = MediaType.APPLICATION_JSON_VALUE)
-   public ResponseEntity<MovieDto> getMovieById(@PathVariable Long movieId) {
-      Movie movie = movieRepository.findById(movieId).orElse(null);
-
-      if (movie != null) {
-         MovieDto movieDto = movieAssembler.toMovieDto(movie);
-         return ResponseEntity.ok(movieDto);
-      } else
-         return ResponseEntity.badRequest().body(null);
+   public ResponseEntity<MovieDto> getMovieById(@PathVariable Long movieId) throws BadRequestException {
+      MovieDto movie = movieService.findMovie(movieId);
+      return ResponseEntity.ok(movie);
    }
 
    @GetMapping(value = "/all", produces = MediaType.APPLICATION_JSON_VALUE)
    public ResponseEntity<List<MovieDto>> getAllMovies() {
-      List<Movie> movies = movieRepository.findAll();
-      List<MovieDto> result = movies.stream().map(it -> movieAssembler.toMovieDto(it)).collect(Collectors.toList());
-      if (result != null) return ResponseEntity.ok(result);
-      else
-         return ResponseEntity.badRequest().body(null);
+      List<MovieDto> movies = movieService.findAllMovies();
+      return ResponseEntity.ok(movies);
    }
 
    @DeleteMapping(value = "/admin/remove/{movieId}")
    public ResponseEntity removeMovie(@PathVariable Long movieId) throws BadRequestException {
-      movieService.removeMovie(movieId);
-      return ResponseEntity.ok(null);
+      List<MovieDto> movies = movieService.removeMovie(movieId);
+      return ResponseEntity.ok(movies);
    }
 
    @ExceptionHandler({BadRequestException.class})
