@@ -1,7 +1,7 @@
 package com.Cinema.movie.dto;
 
 import com.Cinema.movie.genre.Genre;
-import com.Cinema.showing.Showing;
+import com.Cinema.showing.dto.ShowingDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -30,5 +30,5 @@ public class MovieDto {
 
    private String image;
 
-   private Set<Showing> showings;
+   private Set<ShowingDto> showings;
 }

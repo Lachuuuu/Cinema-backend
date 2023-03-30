@@ -10,4 +10,6 @@ public interface GenreRepository extends JpaRepository<Genre, Long> {
 
    Set<Genre> findAllByIdIsIn(Set<Long> genreIds);
 
+   Boolean existsByName(String name);
+
 }

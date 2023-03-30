@@ -6,6 +6,7 @@ import com.Cinema.reservation.Reservation;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -38,10 +39,15 @@ public class Showing {
    @JoinColumn(name = "hall_id")
    private Hall hall;
 
-   @OneToMany(mappedBy = "showing")
+   @OneToMany(mappedBy = "showing", cascade = CascadeType.REMOVE)
    private Set<Reservation> reservations;
 
    private LocalDateTime showingStartTime;
 
    private String seatsMap;
+
+   private Boolean isActive;
+
+   @NotBlank
+   private String name;
 }
