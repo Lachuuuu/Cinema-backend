@@ -5,8 +5,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -15,8 +14,8 @@ public class GenreService {
 
    private final GenreRepository genreRepository;
 
-   public Set<Genre> getAllGenres() {
-      return genreRepository.findAll().stream().collect(Collectors.toSet());
+   public List<Genre> getAllGenres() {
+      return genreRepository.findAll();
    }
 
    public Genre addGenre(String genreName) throws BadRequestException {
@@ -26,9 +25,11 @@ public class GenreService {
       } else throw new BadRequestException("Genre with that name already exists");
    }
 
-   public void removeGenre(Long genreId) throws BadRequestException {
+   public List<Genre> removeGenre(Long genreId) throws BadRequestException {
       Genre genre = genreRepository.findById(genreId).orElseThrow(() -> new BadRequestException("Genre not found"));
       genreRepository.delete(genre);
+
+      return genreRepository.findAll();
    }
 
 }

@@ -3,7 +3,7 @@ package com.Cinema.hall;
 import com.Cinema.hall.request.AddHallRequest;
 import com.Cinema.security.auth.exception.BadRequestException;
 import com.google.gson.Gson;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@AllArgsConstructor
+@RequiredArgsConstructor
 @RequestMapping("/hall")
 public class HallController {
    private final HallService hallService;
