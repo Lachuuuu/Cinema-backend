@@ -25,7 +25,7 @@ public class HallService {
       if (addHallRequest.getSeatsMap() != null && addHallRequest.getName() != null) {
          Hall hall = new Hall(null, addHallRequest.getSeatsMap(), addHallRequest.getName());
          return hallRepository.save(hall);
-      } else throw new BadRequestException("Seats map cannot be empty");
+      } else throw new BadRequestException("Seats map and name cannot be empty");
    }
 
    public List<Hall> removeHall(Long hallId) throws BadRequestException {

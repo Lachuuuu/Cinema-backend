@@ -30,6 +30,8 @@ dependencies {
     implementation("com.google.code.gson:gson:2.10.1")
     implementation("org.hibernate:hibernate-validator:8.0.0.Final")
     implementation("jakarta.validation:jakarta.validation-api:3.0.2")
+    testImplementation("org.projectlombok:lombok:1.18.22")
+    testImplementation("org.projectlombok:lombok:1.18.22")
     developmentOnly("org.springframework.boot:spring-boot-devtools")
     runtimeOnly("org.postgresql:postgresql")
     runtimeOnly("io.jsonwebtoken:jjwt-impl:0.11.5")
