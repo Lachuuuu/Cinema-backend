@@ -1,22 +1,28 @@
 # Cinema-backend
 
-Project is still in production phase. I'm trying to upgrade it in my free time, you can see list of completed and planned features below
+Project is simple management system for cinema business  
 
-DONE:  
--cookies  
--registration  
--login  
--jwt tokens  
--email verification  
--spring security configs  
--database configs  
-  
-TO-DO:  
--CRUD for movies  
--CRUD for reservations  
--CRUD for hall's  
--CRUD for screening's  
--tests  
--docker  
--loombok migration??  
+Used Technologies:  
+- Java  
+- Spring Boot  
+- Lombok  
+- Hibernate / JPA  
+- PostgreSQL  
+
+Avaible Features:  
+- JWT authorization [login (USER) / register (EVERYONE)]  
+- Halls [read (ADMIN) / create (ADMIN) / remove (ADMIN)]  
+- Movies [read one (USER) / read all (USER) / create (ADMIN) / delete (ADMIN)]  
+- Reservations [read all for given user (USER) / create (USER)]  
+- Search [query included in movie title / movie genres (EVERYONE)]  
+- Showings [read all (ADMIN) / update (ADMIN) / delete (ADMIN) / create (ADMIN)]  
+- User [update (USER)]  
+- Register Email verification link  
+
+TO DO:  
+- remove account avaible for users  
+- remove reservation avaible for users
+- Tests  
+- Docker  
+- Better READ ME  
 ...  
