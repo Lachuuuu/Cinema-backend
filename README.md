@@ -17,12 +17,13 @@ Avaible Features:
 - Search [query included in movie title / movie genres (EVERYONE)]  
 - Showings [read all (ADMIN) / update (ADMIN) / delete (ADMIN) / create (ADMIN)]  
 - User [update (USER)]  
+- Movie genre [read all (USER) / create (ADMIN) / delete (ADMIN)]  
 - Register Email verification link  
 
 TO DO:  
 - remove account avaible for users  
-- remove reservation avaible for users
-- Tests  
+- remove reservation avaible for users  
+- More tests  
 - Docker  
 - Better READ ME  
 ...  
