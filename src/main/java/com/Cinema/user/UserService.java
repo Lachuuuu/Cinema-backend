@@ -97,6 +97,11 @@ public class UserService {
       return user;
    }
 
+   public User deactivateAccount(User user) {
+      user.setActive(false);
+      return userRepository.save(user);
+   }
+
    public String checkIfRequestIsUnique(RegisterRequest request) {
 
       if (!checkIfEmailIsUnique(request.getEmail())) return "email is taken";

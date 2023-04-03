@@ -7,7 +7,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Set;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -19,21 +19,21 @@ public class GenreController {
    private final Gson gson;
 
    @GetMapping(value = "/all", produces = MediaType.APPLICATION_JSON_VALUE)
-   public ResponseEntity<Set<Genre>> getAllMovies() {
-      Set<Genre> genres = genreService.getAllGenres();
+   public ResponseEntity<List<Genre>> getAllMovies() {
+      List<Genre> genres = genreService.getAllGenres();
       return ResponseEntity.ok(genres);
    }
 
    @PostMapping(value = "/admin/add")
-   public ResponseEntity addNewGenre(@RequestParam String name) throws BadRequestException {
-      genreService.addGenre(name);
-      return ResponseEntity.ok(null);
+   public ResponseEntity<Genre> addNewGenre(@RequestParam String name) throws BadRequestException {
+      Genre genre = genreService.addGenre(name);
+      return ResponseEntity.ok(genre);
    }
 
    @DeleteMapping(value = "/admin/remove")
-   public ResponseEntity removeGenre(@RequestParam Long genreId) throws BadRequestException {
-      genreService.removeGenre(genreId);
-      return ResponseEntity.ok(null);
+   public ResponseEntity<List<Genre>> removeGenre(@RequestParam Long genreId) throws BadRequestException {
+      List<Genre> genres = genreService.removeGenre(genreId);
+      return ResponseEntity.ok(genres);
    }
 
    @ExceptionHandler({BadRequestException.class})

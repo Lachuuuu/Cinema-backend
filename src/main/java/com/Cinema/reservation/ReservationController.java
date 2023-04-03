@@ -12,7 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @RestController
 @AllArgsConstructor
@@ -24,18 +23,12 @@ public class ReservationController {
 
    private final Gson gson;
 
-   private final ReservationAssembler reservationAssembler;
-
    @PostMapping(value = "/add", consumes = MediaType.APPLICATION_JSON_VALUE)
    public ResponseEntity<String> addReservation(
          @CookieValue(name = "jwt") String token,
          @RequestBody AddReservationRequest addReservationRequest
    ) throws BadRequestException {
-      User user = null;
-      try {
-         user = userService.getUser(token);
-      } catch (BadRequestException ignored) {
-      }
+      User user = userService.getUser(token);
       reservationService.addReservation(user, addReservationRequest);
       return ResponseEntity.ok(gson.toJson("Successfully made reservation"));
    }
@@ -43,17 +36,20 @@ public class ReservationController {
    @GetMapping(value = "/user")
    public ResponseEntity<Set<ReservationDto>> getUserReservations(
          @CookieValue(name = "jwt") String token
-   ) {
-      User user = null;
-      try {
-         user = userService.getUser(token);
-      } catch (BadRequestException ignored) {
-      }
-      Set<Reservation> listOfUserReservations = reservationService.getUserReservations(user);
-      Set<ReservationDto> result = listOfUserReservations.stream()
-            .map(it -> reservationAssembler.toReservationDto(it))
-            .collect(Collectors.toSet());
-      return ResponseEntity.ok().body(result);
+   ) throws BadRequestException {
+      User user = userService.getUser(token);
+      Set<ReservationDto> listOfUserReservations = reservationService.getUserReservations(user);
+      return ResponseEntity.ok().body(listOfUserReservations);
+   }
+
+   @DeleteMapping(value = "/{reservationId}")
+   public ResponseEntity removeReservation(
+         @PathVariable Long reservationId,
+         @CookieValue(name = "jwt") String token
+   ) throws BadRequestException {
+      User user = userService.getUser(token);
+      reservationService.removeReservation(user, reservationId);
+      return ResponseEntity.ok(null);
    }
 
    @ExceptionHandler({BadRequestException.class})

@@ -1,5 +1,6 @@
 package com.Cinema.reservation;
 
+import com.Cinema.reservation.dto.ReservationDto;
 import com.Cinema.reservation.request.AddReservationRequest;
 import com.Cinema.security.auth.exception.BadRequestException;
 import com.Cinema.showing.Showing;
@@ -14,7 +15,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -33,6 +36,8 @@ public class ReservationService {
    private final ShowingRepository showingRepository;
 
    private final ShowingService showingService;
+
+   private final ReservationAssembler reservationAssembler;
 
    public Reservation addReservation(User user, AddReservationRequest addReservationRequest) throws BadRequestException {
 
@@ -55,18 +60,25 @@ public class ReservationService {
       final Set<ConstraintViolation<Reservation>> constraints = validator.validate(newReservation);
       if (!constraints.isEmpty()) throw new BadRequestException(constraints.iterator().next().getMessage());
 
-      try {
-         showingService.updateSeatsMap(showing, addReservationRequest.getSeatIds());
-      } catch (BadRequestException e) {
-         throw new BadRequestException(e.getMessage());
-      }
+      showingService.updateSeatsMap(showing, addReservationRequest.getSeatIds());
 
-      reservationRepository.save(newReservation);
-      return newReservation;
+      return reservationRepository.save(newReservation);
    }
 
-   public Set<Reservation> getUserReservations(User user) {
-      return reservationRepository.findAllByUser(user);
+   public Set<ReservationDto> getUserReservations(User user) {
+      List<Reservation> userReservations = reservationRepository.findAllByUserOrderById(user);
+      Set<ReservationDto> result = userReservations.stream()
+            .map(it -> reservationAssembler.toReservationDto(it))
+            .collect(Collectors.toSet());
+      return result;
+   }
+
+   public void removeReservation(User user, Long reservationId) throws BadRequestException {
+      Reservation reservation = reservationRepository.findById(reservationId)
+            .orElseThrow(() -> new BadRequestException("Reservation not found"));
+      if (!reservation.getUser().equals(user)) throw new BadRequestException("You are not owner of the reservation");
+
+      reservationRepository.delete(reservation);
    }
 
    private BigDecimal calculateTotalValue(Long normal, Long discount) {

@@ -8,8 +8,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.List;
 
 @Service
 @Transactional
@@ -24,22 +23,21 @@ public class HallService {
       if (addHallRequest.getSeatsMap() != null && addHallRequest.getName() != null) {
          Hall hall = new Hall(null, addHallRequest.getSeatsMap(), addHallRequest.getName());
          return hallRepository.save(hall);
-      } else throw new BadRequestException("Seats map cannot be empty");
+      } else throw new BadRequestException("Seats map and name cannot be empty");
    }
 
-   public void removeHall(Long hallId) throws BadRequestException {
+   public List<Hall> removeHall(Long hallId) throws BadRequestException {
       Hall hall = hallRepository.findById(hallId)
             .orElseThrow(() -> new BadRequestException("Hall not found"));
 
-      Set<Showing> showings = showingRepository.findAll().stream()
-            .filter(it -> (it.getHall().equals(hall) && it.getIsActive()))
-            .collect(Collectors.toSet());
+      List<Showing> showings = showingRepository.findAllByHallAndIsActive(hall, true);
       if (showings.isEmpty()) hallRepository.delete(hall);
       else throw new BadRequestException("There are showings in the hall, delete them first");
+      return hallRepository.findAll();
    }
 
-   public Set<Hall> getAllHalls() {
-      Set<Hall> halls = hallRepository.findAll().stream().collect(Collectors.toSet());
+   public List<Hall> getAllHalls() {
+      List<Hall> halls = hallRepository.findAll();
       return halls;
    }
 

@@ -10,13 +10,13 @@ import com.Cinema.user.dto.UserDto;
 import com.google.gson.Gson;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@AllArgsConstructor
+@RequiredArgsConstructor
 @RequestMapping("/auth")
 public class AuthenticationController {
 
@@ -24,14 +24,13 @@ public class AuthenticationController {
    private final CookieService cookieService;
    private final EmailConfirmationService emailConfirmationService;
    private final Gson gson;
-
    private final UserAssembler userAssembler;
 
    @PostMapping(value = "/register", consumes = MediaType.APPLICATION_JSON_VALUE)
    public ResponseEntity<?> register(
          @RequestBody RegisterRequest request
    ) throws BadRequestException {
-      final User user = authenticationService.register(request);
+      User user = authenticationService.register(request);
       if (user != null) emailConfirmationService.sendEmail(user);
       return ResponseEntity.ok(gson.toJson("Verify email by the link sent on your email address"));
    }
@@ -40,15 +39,16 @@ public class AuthenticationController {
    public ResponseEntity<UserDto> auth(
          @RequestBody AuthenticationRequest request,
          HttpServletResponse response
-   ) {
+   ) throws BadRequestException {
       User authenticatedUser = cookieService.createAuthenticationCookies(request, response);
-      if (authenticatedUser == null) return ResponseEntity.badRequest().body(null);
+      if (authenticatedUser == null) throw new BadRequestException("Authentication failed");
       return ResponseEntity.ok(userAssembler.toUserDto(authenticatedUser));
    }
 
    @GetMapping(value = "/confirm-account", produces = MediaType.APPLICATION_JSON_VALUE)
-   public ResponseEntity<?> confirmUserAccount(@RequestParam("token") String confirmationToken) {
-      return emailConfirmationService.confirmEmail(confirmationToken);
+   public ResponseEntity<String> confirmUserAccount(@RequestParam("token") String confirmationToken) throws BadRequestException {
+      emailConfirmationService.confirmEmail(confirmationToken);
+      return ResponseEntity.ok(gson.toJson("Email verified successfully!"));
    }
 
    @GetMapping(value = "/logout")

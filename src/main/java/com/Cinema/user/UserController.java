@@ -10,13 +10,13 @@ import com.Cinema.user.request.UpdatePhoneNumberRequest;
 import com.google.gson.Gson;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@AllArgsConstructor
+@RequiredArgsConstructor
 @RequestMapping("/user")
 public class UserController {
 
@@ -33,8 +33,7 @@ public class UserController {
          @CookieValue(name = "jwt") String token
    ) throws BadRequestException {
       User user = userService.getUser(token);
-      UserDto userDto = userAssembler.toUserDto(user);
-      return ResponseEntity.ok(userDto);
+      return ResponseEntity.ok(userAssembler.toUserDto(user));
    }
 
    @PostMapping(value = "/change/email", consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -86,6 +85,12 @@ public class UserController {
       User user = userService.getUser(token);
       userService.changePhoneNumber(user, updatePhoneNumberRequest);
       return ResponseEntity.ok().body(gson.toJson("phone number changed successfully"));
+   }
+
+   @PostMapping(value = "/remove")
+   public ResponseEntity<User> deactivateAccount(@CookieValue(name = "jwt") String token) throws BadRequestException {
+      User user = userService.getUser(token);
+      return ResponseEntity.ok(userService.deactivateAccount(user));
    }
 
    @ExceptionHandler({BadRequestException.class})

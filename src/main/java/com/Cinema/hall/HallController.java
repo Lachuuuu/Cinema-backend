@@ -3,15 +3,15 @@ package com.Cinema.hall;
 import com.Cinema.hall.request.AddHallRequest;
 import com.Cinema.security.auth.exception.BadRequestException;
 import com.google.gson.Gson;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Set;
+import java.util.List;
 
 @RestController
-@AllArgsConstructor
+@RequiredArgsConstructor
 @RequestMapping("/hall")
 public class HallController {
    private final HallService hallService;
@@ -19,21 +19,21 @@ public class HallController {
    private final Gson gson;
 
    @GetMapping(value = "/admin/all", produces = MediaType.APPLICATION_JSON_VALUE)
-   public ResponseEntity<Set<Hall>> getAllHalls() {
-      Set<Hall> halls = hallService.getAllHalls();
+   public ResponseEntity<List<Hall>> getAllHalls() {
+      List<Hall> halls = hallService.getAllHalls();
       return ResponseEntity.ok().body(halls);
    }
 
    @PostMapping(value = "/admin/add")
-   public ResponseEntity addHall(@RequestBody AddHallRequest addHallRequest) throws BadRequestException {
+   public ResponseEntity<Hall> addHall(@RequestBody AddHallRequest addHallRequest) throws BadRequestException {
       Hall hall = hallService.addHall(addHallRequest);
-      return ResponseEntity.ok(null);
+      return ResponseEntity.ok(hall);
    }
 
    @DeleteMapping(value = "/admin/remove/{hallId}")
-   public ResponseEntity removeHall(@PathVariable Long hallId) throws BadRequestException {
-      hallService.removeHall(hallId);
-      return ResponseEntity.ok(null);
+   public ResponseEntity<List<Hall>> removeHall(@PathVariable Long hallId) throws BadRequestException {
+      List<Hall> halls = hallService.removeHall(hallId);
+      return ResponseEntity.ok(halls);
    }
 
    @ExceptionHandler({BadRequestException.class})
