@@ -42,6 +42,16 @@ public class ReservationController {
       return ResponseEntity.ok().body(listOfUserReservations);
    }
 
+   @DeleteMapping(value = "/{reservationId}")
+   public ResponseEntity removeReservation(
+         @PathVariable Long reservationId,
+         @CookieValue(name = "jwt") String token
+   ) throws BadRequestException {
+      User user = userService.getUser(token);
+      reservationService.removeReservation(user, reservationId);
+      return ResponseEntity.ok(null);
+   }
+
    @ExceptionHandler({BadRequestException.class})
    public ResponseEntity<String> handleInvalidTopTalentDataException(BadRequestException e) {
       return ResponseEntity.badRequest().body(gson.toJson(e.getMessage()));

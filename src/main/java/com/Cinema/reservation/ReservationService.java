@@ -73,6 +73,14 @@ public class ReservationService {
       return result;
    }
 
+   public void removeReservation(User user, Long reservationId) throws BadRequestException {
+      Reservation reservation = reservationRepository.findById(reservationId)
+            .orElseThrow(() -> new BadRequestException("Reservation not found"));
+      if (!reservation.getUser().equals(user)) throw new BadRequestException("You are not owner of the reservation");
+
+      reservationRepository.delete(reservation);
+   }
+
    private BigDecimal calculateTotalValue(Long normal, Long discount) {
       return normalTicketPrice.multiply(BigDecimal.valueOf(normal)).add(discountTicketPrice.multiply(BigDecimal.valueOf(discount)));
    }

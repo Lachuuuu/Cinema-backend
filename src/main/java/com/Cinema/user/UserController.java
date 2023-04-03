@@ -87,6 +87,12 @@ public class UserController {
       return ResponseEntity.ok().body(gson.toJson("phone number changed successfully"));
    }
 
+   @PostMapping(value = "/remove")
+   public ResponseEntity<User> deactivateAccount(@CookieValue(name = "jwt") String token) throws BadRequestException {
+      User user = userService.getUser(token);
+      return ResponseEntity.ok(userService.deactivateAccount(user));
+   }
+
    @ExceptionHandler({BadRequestException.class})
    public ResponseEntity<String> handleInvalidTopTalentDataException(Exception e) {
       return ResponseEntity.badRequest().body(gson.toJson(e.getMessage()));

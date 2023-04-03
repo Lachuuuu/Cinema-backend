@@ -6,8 +6,9 @@ import com.Cinema.movie.genre.GenreRepository;
 import com.Cinema.movie.request.NewMovieRequest;
 import com.Cinema.security.auth.exception.BadRequestException;
 import com.Cinema.showing.Showing;
-import com.Cinema.showing.ShowingRepository;
 import jakarta.transaction.Transactional;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -24,25 +25,31 @@ public class MovieService {
 
    private final MovieRepository movieRepository;
 
-   private final ShowingRepository showingRepository;
-
    private final MovieAssembler movieAssembler;
 
+   private final Validator validator;
+
    public Movie addMovie(NewMovieRequest request) throws BadRequestException {
-      Set<Genre> genres = genreRepository.findAllByIdIsIn(request.getGenres()).stream().collect(Collectors.toSet());
+      Set<Genre> genres = genreRepository.findAllByIdIsIn(request.getGenres());
+
+      if (request.getImage() == null) request.setImage("");
+
+      Movie movie = new Movie(
+            null,
+            request.getName(),
+            request.getDescription(),
+            request.getDurationMin(),
+            request.getPremiereDate(),
+            genres,
+            request.getMinAge(),
+            Base64.getDecoder().decode(request.getImage().getBytes()),
+            Set.of()
+      );
+
+      final Set<ConstraintViolation<Movie>> constraints = validator.validate(movie);
+      if (!constraints.isEmpty()) throw new BadRequestException(constraints.iterator().next().getMessage());
 
       try {
-         Movie movie = new Movie(
-               null,
-               request.getName(),
-               request.getDescription(),
-               request.getDurationMin(),
-               request.getPremiereDate(),
-               genres,
-               request.getMinAge(),
-               Base64.getDecoder().decode(request.getImage().getBytes()),
-               null
-         );
          return movieRepository.save(movie);
       } catch (Exception e) {
          throw new BadRequestException("Error occurred while trying to add movie");
@@ -52,8 +59,9 @@ public class MovieService {
    public List<MovieDto> removeMovie(Long movieId) throws BadRequestException {
       Movie movie = movieRepository.findById(movieId)
             .orElseThrow(() -> new BadRequestException("Movie not found"));
-      Set<Showing> showings = showingRepository.findAll().stream()
-            .filter(it -> (it.getMovie().equals(movie) && it.getIsActive()))
+
+      Set<Showing> showings = movie.getShowings().stream()
+            .filter(showing -> showing.getIsActive() == true)
             .collect(Collectors.toSet());
 
       if (showings.isEmpty()) movieRepository.delete(movie);

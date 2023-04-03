@@ -9,8 +9,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -32,9 +30,7 @@ public class HallService {
       Hall hall = hallRepository.findById(hallId)
             .orElseThrow(() -> new BadRequestException("Hall not found"));
 
-      Set<Showing> showings = showingRepository.findAll().stream()
-            .filter(it -> (it.getHall().equals(hall) && it.getIsActive()))
-            .collect(Collectors.toSet());
+      List<Showing> showings = showingRepository.findAllByHallAndIsActive(hall, true);
       if (showings.isEmpty()) hallRepository.delete(hall);
       else throw new BadRequestException("There are showings in the hall, delete them first");
       return hallRepository.findAll();

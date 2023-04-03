@@ -22,13 +22,14 @@ import static org.mockito.Mockito.when;
 @Transactional
 class HallServiceTest {
    @Mock
-   static HallRepository hallRepository;
+   HallRepository hallRepository;
 
    @Mock
-   static ShowingRepository showingRepository;
+   ShowingRepository showingRepository;
 
    @InjectMocks
-   static HallService hallService;
+   HallService hallService;
+
 
    @Test
    void addHall_Should_Return_Exception_When_Name_Is_Null_And_SeatsMap_Is_Null() {
@@ -78,7 +79,7 @@ class HallServiceTest {
       //given
       Long hallId = 1L;
       //when
-      when(hallRepository.findById(any(Long.class))).thenReturn(null);
+      when(hallRepository.findById(any())).thenReturn(Optional.empty());
       //then
       BadRequestException exception = assertThrows(BadRequestException.class, () -> hallService.removeHall(hallId));
       assertEquals("Hall not found", exception.getMessage());
@@ -91,7 +92,7 @@ class HallServiceTest {
       Hall hall = new Hall(1L, "", "");
       //when
       when(hallRepository.findById(any(Long.class))).thenReturn(Optional.of(hall));
-      when(showingRepository.findAll()).thenReturn(List.of(new Showing(null, null, hall, null, null, null, true, null)));
+      when(showingRepository.findAllByHallAndIsActive(hall, true)).thenReturn(List.of(new Showing(null, null, hall, null, null, null, true, null)));
       //then
       BadRequestException exception = assertThrows(BadRequestException.class, () -> hallService.removeHall(hallId));
       assertEquals("There are showings in the hall, delete them first", exception.getMessage());
