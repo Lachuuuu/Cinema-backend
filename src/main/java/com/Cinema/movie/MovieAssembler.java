@@ -1,6 +1,7 @@
 package com.Cinema.movie;
 
 import com.Cinema.movie.dto.MovieDto;
+import com.Cinema.showing.Showing;
 import com.Cinema.showing.ShowingAssembler;
 import lombok.RequiredArgsConstructor;
 import org.apache.tomcat.util.codec.binary.Base64;
@@ -27,8 +28,8 @@ public class MovieAssembler {
             movie.getMinAge(),
             "data:image/jpeg;base64," + Base64.encodeBase64String(movie.getImage()),
             movie.getShowings().stream()
-                  .filter(it -> it.getIsActive())
-                  .map(showing -> showingAssembler.toDto(showing))
+                  .filter(Showing::getIsActive)
+                  .map(showingAssembler::toDto)
                   .collect(Collectors.toSet())
       );
    }

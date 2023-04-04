@@ -37,8 +37,7 @@ public class HallService {
    }
 
    public List<Hall> getAll() {
-      List<Hall> halls = hallRepository.findAll();
-      return halls;
+      return hallRepository.findAll();
    }
 
 }

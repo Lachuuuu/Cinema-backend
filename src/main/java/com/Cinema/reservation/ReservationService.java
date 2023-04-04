@@ -39,7 +39,7 @@ public class ReservationService {
 
    private final ReservationAssembler reservationAssembler;
 
-   public Reservation addReservation(User user, AddReservationRequest addReservationRequest) throws BadRequestException {
+   public Reservation add(User user, AddReservationRequest addReservationRequest) throws BadRequestException {
 
       Showing showing = showingRepository.findById(addReservationRequest.getShowingId()).orElse(null);
       if (showing == null) throw new BadRequestException("showing do not exist");
@@ -67,13 +67,12 @@ public class ReservationService {
 
    public Set<ReservationDto> getUserReservations(User user) {
       List<Reservation> userReservations = reservationRepository.findAllByUserOrderById(user);
-      Set<ReservationDto> result = userReservations.stream()
-            .map(it -> reservationAssembler.toDto(it))
+      return userReservations.stream()
+            .map(reservationAssembler::toDto)
             .collect(Collectors.toSet());
-      return result;
    }
 
-   public void removeReservation(User user, Long reservationId) throws BadRequestException {
+   public void remove(User user, Long reservationId) throws BadRequestException {
       Reservation reservation = reservationRepository.findById(reservationId)
             .orElseThrow(() -> new BadRequestException("Reservation not found"));
       if (!reservation.getUser().equals(user)) throw new BadRequestException("You are not owner of the reservation");

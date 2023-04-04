@@ -29,7 +29,7 @@ public class MovieService {
 
    private final Validator validator;
 
-   public Movie addMovie(NewMovieRequest request) throws BadRequestException {
+   public Movie add(NewMovieRequest request) throws BadRequestException {
       Set<Genre> genres = genreRepository.findAllByIdIsIn(request.getGenres());
 
       if (request.getImage() == null) request.setImage("");
@@ -56,33 +56,31 @@ public class MovieService {
       }
    }
 
-   public List<MovieDto> removeMovie(Long movieId) throws BadRequestException {
+   public List<MovieDto> remove(Long movieId) throws BadRequestException {
       Movie movie = movieRepository.findById(movieId)
             .orElseThrow(() -> new BadRequestException("Movie not found"));
 
       Set<Showing> showings = movie.getShowings().stream()
-            .filter(showing -> showing.getIsActive() == true)
+            .filter(Showing::getIsActive)
             .collect(Collectors.toSet());
 
       if (showings.isEmpty()) movieRepository.delete(movie);
       else throw new BadRequestException("Showings uses this movie, delete them first");
 
       List<Movie> movies = movieRepository.findAllByOrderById();
-      List<MovieDto> result = movies.stream().map(it -> movieAssembler.toDto(it)).collect(Collectors.toList());
 
-      return result;
+      return movies.stream().map(movieAssembler::toDto).collect(Collectors.toList());
 
    }
 
-   public MovieDto findMovie(Long movieId) throws BadRequestException {
+   public MovieDto find(Long movieId) throws BadRequestException {
       Movie movie = movieRepository.findById(movieId).orElseThrow(() -> new BadRequestException("Movie not found"));
       return movieAssembler.toDto(movie);
    }
 
-   public List<MovieDto> findAllMovies() {
+   public List<MovieDto> findAll() {
       List<Movie> movies = movieRepository.findAllByOrderById();
-      List<MovieDto> result = movies.stream().map(it -> movieAssembler.toDto(it)).collect(Collectors.toList());
-      return result;
+      return movies.stream().map(movieAssembler::toDto).collect(Collectors.toList());
    }
 
 }

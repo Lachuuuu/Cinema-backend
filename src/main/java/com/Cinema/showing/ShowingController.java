@@ -25,30 +25,30 @@ public class ShowingController {
    public ResponseEntity<String> add(
          @RequestBody AddShowingRequest addShowingRequest
    ) throws BadRequestException {
-      showingService.addShowing(addShowingRequest);
+      showingService.add(addShowingRequest);
       return ResponseEntity.ok().body(gson.toJson("Showing added successfully"));
    }
 
    @PutMapping(value = "/admin/remove/{showingId}")
    public ResponseEntity<List<Showing>> remove(@PathVariable Long showingId) throws BadRequestException {
-      List<Showing> showings = showingService.removeShowing(showingId);
+      List<Showing> showings = showingService.remove(showingId);
       return ResponseEntity.ok().body(showings);
    }
 
    @PutMapping(value = "/admin/update")
    public ResponseEntity<Showing> update(@RequestBody UpdateShowingRequest updateShowingRequest) throws BadRequestException {
-      Showing showing = showingService.updateShowing(updateShowingRequest);
+      Showing showing = showingService.update(updateShowingRequest);
       return ResponseEntity.ok(showing);
    }
 
    @GetMapping(value = "/admin/all")
    public ResponseEntity<List<ShowingDto>> getAll() {
-      List<ShowingDto> showings = showingService.getAllShowings();
+      List<ShowingDto> showings = showingService.getAll();
       return ResponseEntity.ok().body(showings);
    }
 
    @ExceptionHandler({BadRequestException.class})
-   public ResponseEntity<String> exceptionsHandler(Exception e) {
+   public ResponseEntity<String> handleInvalidTopTalentDataException(Exception e) {
       return ResponseEntity.badRequest().body(gson.toJson(e.getMessage()));
    }
 }

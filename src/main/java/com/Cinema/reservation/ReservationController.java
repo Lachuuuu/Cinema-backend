@@ -29,7 +29,7 @@ public class ReservationController {
          @RequestBody AddReservationRequest addReservationRequest
    ) throws BadRequestException {
       User user = userService.getUserByToken(token);
-      reservationService.addReservation(user, addReservationRequest);
+      reservationService.add(user, addReservationRequest);
       return ResponseEntity.ok(gson.toJson("Successfully made reservation"));
    }
 
@@ -48,7 +48,7 @@ public class ReservationController {
          @CookieValue(name = "jwt") String token
    ) throws BadRequestException {
       User user = userService.getUserByToken(token);
-      reservationService.removeReservation(user, reservationId);
+      reservationService.remove(user, reservationId);
       return ResponseEntity.ok(true);
    }
 

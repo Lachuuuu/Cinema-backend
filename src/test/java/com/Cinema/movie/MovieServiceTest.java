@@ -43,7 +43,7 @@ class MovieServiceTest {
       // when
       when(movieRepository.findAllByOrderById()).thenReturn(moviesInDatabase);
       // then
-      assertEquals(List.of(), movieService.findAllMovies());
+      assertEquals(List.of(), movieService.findAll());
    }
 
    @Test
@@ -57,7 +57,7 @@ class MovieServiceTest {
       // when
       when(movieRepository.findAllByOrderById()).thenReturn(moviesInDatabase);
       // then
-      assertEquals(moviesDtos, movieService.findAllMovies());
+      assertEquals(moviesDtos, movieService.findAll());
    }
 
    @Test
@@ -67,7 +67,7 @@ class MovieServiceTest {
       // when
       when(movieRepository.findById(any())).thenReturn(Optional.empty());
       // then
-      BadRequestException exception = assertThrows(BadRequestException.class, () -> movieService.findMovie(movieId));
+      BadRequestException exception = assertThrows(BadRequestException.class, () -> movieService.find(movieId));
       assertEquals("Movie not found", exception.getMessage());
    }
 
@@ -88,7 +88,7 @@ class MovieServiceTest {
       // when
       when(movieRepository.findById(any())).thenReturn(Optional.of(movie));
       // then
-      assertEquals(movieAssembler.toDto(movie), movieService.findMovie(movieId));
+      assertEquals(movieAssembler.toDto(movie), movieService.find(movieId));
    }
 
    @Test
@@ -98,7 +98,7 @@ class MovieServiceTest {
       // when
       when(movieRepository.findById(any())).thenReturn(Optional.empty());
       // then
-      BadRequestException exception = assertThrows(BadRequestException.class, () -> movieService.removeMovie(movieId));
+      BadRequestException exception = assertThrows(BadRequestException.class, () -> movieService.remove(movieId));
       assertEquals("Movie not found", exception.getMessage());
    }
 
@@ -127,7 +127,7 @@ class MovieServiceTest {
       // when
       when(movieRepository.findById(any())).thenReturn(Optional.of(movie));
       // then
-      BadRequestException exception = assertThrows(BadRequestException.class, () -> movieService.removeMovie(movieId));
+      BadRequestException exception = assertThrows(BadRequestException.class, () -> movieService.remove(movieId));
       assertEquals("Showings uses this movie, delete them first", exception.getMessage());
    }
 
@@ -156,7 +156,7 @@ class MovieServiceTest {
       // when
       when(movieRepository.findById(any())).thenReturn(Optional.of(movie));
       // then
-      assertEquals(ArrayList.class, movieService.removeMovie(movieId).getClass());
+      assertEquals(ArrayList.class, movieService.remove(movieId).getClass());
       verify(movieRepository).delete(movie);
    }
 }
