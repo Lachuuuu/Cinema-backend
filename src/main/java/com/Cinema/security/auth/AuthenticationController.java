@@ -31,7 +31,7 @@ public class AuthenticationController {
          @RequestBody RegisterRequest request
    ) throws BadRequestException {
       User user = authenticationService.register(request);
-      if (user != null) emailConfirmationService.sendEmail(user);
+      if (user != null) emailConfirmationService.send(user);
       return ResponseEntity.ok(gson.toJson("Verify email by the link sent on your email address"));
    }
 
@@ -42,12 +42,12 @@ public class AuthenticationController {
    ) throws BadRequestException {
       User authenticatedUser = cookieService.createAuthenticationCookies(request, response);
       if (authenticatedUser == null) throw new BadRequestException("Authentication failed");
-      return ResponseEntity.ok(userAssembler.toUserDto(authenticatedUser));
+      return ResponseEntity.ok(userAssembler.toDto(authenticatedUser));
    }
 
    @GetMapping(value = "/confirm-account", produces = MediaType.APPLICATION_JSON_VALUE)
    public ResponseEntity<String> confirmUserAccount(@RequestParam("token") String confirmationToken) throws BadRequestException {
-      emailConfirmationService.confirmEmail(confirmationToken);
+      emailConfirmationService.confirm(confirmationToken);
       return ResponseEntity.ok(gson.toJson("Email verified successfully!"));
    }
 
@@ -58,7 +58,7 @@ public class AuthenticationController {
    }
 
    @ExceptionHandler({BadRequestException.class})
-   public ResponseEntity<String> handleInvalidTopTalentDataException(BadRequestException e) {
+   public ResponseEntity<String> exceptionsHandler(BadRequestException e) {
       return ResponseEntity.badRequest().body(gson.toJson(e.getMessage()));
    }
 }

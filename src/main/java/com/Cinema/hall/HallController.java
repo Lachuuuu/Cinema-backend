@@ -19,25 +19,25 @@ public class HallController {
    private final Gson gson;
 
    @GetMapping(value = "/admin/all", produces = MediaType.APPLICATION_JSON_VALUE)
-   public ResponseEntity<List<Hall>> getAllHalls() {
-      List<Hall> halls = hallService.getAllHalls();
+   public ResponseEntity<List<Hall>> getAll() {
+      List<Hall> halls = hallService.getAll();
       return ResponseEntity.ok().body(halls);
    }
 
    @PostMapping(value = "/admin/add")
-   public ResponseEntity<Hall> addHall(@RequestBody AddHallRequest addHallRequest) throws BadRequestException {
-      Hall hall = hallService.addHall(addHallRequest);
+   public ResponseEntity<Hall> add(@RequestBody AddHallRequest addHallRequest) throws BadRequestException {
+      Hall hall = hallService.add(addHallRequest);
       return ResponseEntity.ok(hall);
    }
 
    @DeleteMapping(value = "/admin/remove/{hallId}")
-   public ResponseEntity<List<Hall>> removeHall(@PathVariable Long hallId) throws BadRequestException {
-      List<Hall> halls = hallService.removeHall(hallId);
+   public ResponseEntity<List<Hall>> remove(@PathVariable Long hallId) throws BadRequestException {
+      List<Hall> halls = hallService.remove(hallId);
       return ResponseEntity.ok(halls);
    }
 
    @ExceptionHandler({BadRequestException.class})
-   public ResponseEntity<String> handleInvalidTopTalentDataException(BadRequestException e) {
+   public ResponseEntity<String> exceptionsHandler(BadRequestException e) {
       return ResponseEntity.badRequest().body(gson.toJson(e.getMessage()));
    }
 

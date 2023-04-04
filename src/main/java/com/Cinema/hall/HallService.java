@@ -19,14 +19,14 @@ public class HallService {
 
    private final ShowingRepository showingRepository;
 
-   public Hall addHall(AddHallRequest addHallRequest) throws BadRequestException {
+   public Hall add(AddHallRequest addHallRequest) throws BadRequestException {
       if (addHallRequest.getSeatsMap() != null && addHallRequest.getName() != null) {
          Hall hall = new Hall(null, addHallRequest.getSeatsMap(), addHallRequest.getName());
          return hallRepository.save(hall);
       } else throw new BadRequestException("Seats map and name cannot be empty");
    }
 
-   public List<Hall> removeHall(Long hallId) throws BadRequestException {
+   public List<Hall> remove(Long hallId) throws BadRequestException {
       Hall hall = hallRepository.findById(hallId)
             .orElseThrow(() -> new BadRequestException("Hall not found"));
 
@@ -36,7 +36,7 @@ public class HallService {
       return hallRepository.findAll();
    }
 
-   public List<Hall> getAllHalls() {
+   public List<Hall> getAll() {
       List<Hall> halls = hallRepository.findAll();
       return halls;
    }

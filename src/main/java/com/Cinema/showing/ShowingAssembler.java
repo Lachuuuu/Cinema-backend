@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class ShowingAssembler {
 
-   public ShowingDto toShowingDto(Showing Showing) {
+   public ShowingDto toDto(Showing Showing) {
       return new ShowingDto(Showing.getId(),
             Showing.getMovie().getName(),
             Showing.getHall().getId(),

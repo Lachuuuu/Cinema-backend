@@ -68,7 +68,7 @@ public class ReservationService {
    public Set<ReservationDto> getUserReservations(User user) {
       List<Reservation> userReservations = reservationRepository.findAllByUserOrderById(user);
       Set<ReservationDto> result = userReservations.stream()
-            .map(it -> reservationAssembler.toReservationDto(it))
+            .map(it -> reservationAssembler.toDto(it))
             .collect(Collectors.toSet());
       return result;
    }

@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class UserAssembler {
-   public UserDto toUserDto(User user) {
+   public UserDto toDto(User user) {
       return new UserDto(user.getEmail(), user.getFirstName(), user.getLastName(), user.getBirthDate(), user.getPhoneNumber(), user.getRoles());
    }
 }

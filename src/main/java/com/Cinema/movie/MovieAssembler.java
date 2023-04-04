@@ -16,7 +16,7 @@ public class MovieAssembler {
 
    private final ShowingAssembler showingAssembler;
 
-   public MovieDto toMovieDto(Movie movie) {
+   public MovieDto toDto(Movie movie) {
       return new MovieDto(
             movie.getId(),
             movie.getName(),
@@ -28,7 +28,7 @@ public class MovieAssembler {
             "data:image/jpeg;base64," + Base64.encodeBase64String(movie.getImage()),
             movie.getShowings().stream()
                   .filter(it -> it.getIsActive())
-                  .map(showing -> showingAssembler.toShowingDto(showing))
+                  .map(showing -> showingAssembler.toDto(showing))
                   .collect(Collectors.toSet())
       );
    }

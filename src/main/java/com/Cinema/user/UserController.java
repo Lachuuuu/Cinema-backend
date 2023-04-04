@@ -29,11 +29,11 @@ public class UserController {
    private final CookieService cookieService;
 
    @GetMapping(value = "/userByToken", produces = MediaType.APPLICATION_JSON_VALUE)
-   public ResponseEntity<UserDto> getUser(
+   public ResponseEntity<UserDto> getUserByToken(
          @CookieValue(name = "jwt") String token
    ) throws BadRequestException {
-      User user = userService.getUser(token);
-      return ResponseEntity.ok(userAssembler.toUserDto(user));
+      User user = userService.getUserByToken(token);
+      return ResponseEntity.ok(userAssembler.toDto(user));
    }
 
    @PostMapping(value = "/change/email", consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -43,7 +43,7 @@ public class UserController {
          HttpServletResponse response,
          HttpServletRequest request
    ) throws BadRequestException {
-      User user = userService.getUser(token);
+      User user = userService.getUserByToken(token);
       userService.changeEmail(user, updateEmailRequest);
       cookieService.removeCookies(response, request);
       return ResponseEntity.ok(gson.toJson("Email changed successfully, you will be directed to login page in 5 seconds"));
@@ -54,7 +54,7 @@ public class UserController {
          @RequestBody UpdatePasswordRequest updatePasswordRequest,
          @CookieValue(name = "jwt") String token
    ) throws BadRequestException {
-      User user = userService.getUser(token);
+      User user = userService.getUserByToken(token);
       userService.changePassword(user, updatePasswordRequest);
       return ResponseEntity.ok().body(gson.toJson("Password changed successfully"));
    }
@@ -64,8 +64,8 @@ public class UserController {
          @RequestBody UpdateNameRequest updateNameRequest,
          @CookieValue(name = "jwt") String token
    ) throws BadRequestException {
-      User user = userService.changeFirstName(userService.getUser(token), updateNameRequest);
-      return ResponseEntity.ok().body(userAssembler.toUserDto(user));
+      User user = userService.changeFirstName(userService.getUserByToken(token), updateNameRequest);
+      return ResponseEntity.ok().body(userAssembler.toDto(user));
    }
 
    @PostMapping(value = "/change/last_name", consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -73,8 +73,8 @@ public class UserController {
          @RequestBody UpdateNameRequest updateNameRequest,
          @CookieValue(name = "jwt") String token
    ) throws BadRequestException {
-      User user = userService.changeLastName(userService.getUser(token), updateNameRequest);
-      return ResponseEntity.ok().body(userAssembler.toUserDto(user));
+      User user = userService.changeLastName(userService.getUserByToken(token), updateNameRequest);
+      return ResponseEntity.ok().body(userAssembler.toDto(user));
    }
 
    @PostMapping(value = "/change/phone", consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -82,19 +82,19 @@ public class UserController {
          @RequestBody UpdatePhoneNumberRequest updatePhoneNumberRequest,
          @CookieValue(name = "jwt") String token
    ) throws BadRequestException {
-      User user = userService.getUser(token);
+      User user = userService.getUserByToken(token);
       userService.changePhoneNumber(user, updatePhoneNumberRequest);
       return ResponseEntity.ok().body(gson.toJson("phone number changed successfully"));
    }
 
    @PostMapping(value = "/remove")
    public ResponseEntity<User> deactivateAccount(@CookieValue(name = "jwt") String token) throws BadRequestException {
-      User user = userService.getUser(token);
+      User user = userService.getUserByToken(token);
       return ResponseEntity.ok(userService.deactivateAccount(user));
    }
 
    @ExceptionHandler({BadRequestException.class})
-   public ResponseEntity<String> handleInvalidTopTalentDataException(Exception e) {
+   public ResponseEntity<String> exceptionsHandler(Exception e) {
       return ResponseEntity.badRequest().body(gson.toJson(e.getMessage()));
    }
 }

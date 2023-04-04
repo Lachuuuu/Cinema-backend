@@ -24,11 +24,11 @@ public class ReservationController {
    private final Gson gson;
 
    @PostMapping(value = "/add", consumes = MediaType.APPLICATION_JSON_VALUE)
-   public ResponseEntity<String> addReservation(
+   public ResponseEntity<String> add(
          @CookieValue(name = "jwt") String token,
          @RequestBody AddReservationRequest addReservationRequest
    ) throws BadRequestException {
-      User user = userService.getUser(token);
+      User user = userService.getUserByToken(token);
       reservationService.addReservation(user, addReservationRequest);
       return ResponseEntity.ok(gson.toJson("Successfully made reservation"));
    }
@@ -37,23 +37,23 @@ public class ReservationController {
    public ResponseEntity<Set<ReservationDto>> getUserReservations(
          @CookieValue(name = "jwt") String token
    ) throws BadRequestException {
-      User user = userService.getUser(token);
+      User user = userService.getUserByToken(token);
       Set<ReservationDto> listOfUserReservations = reservationService.getUserReservations(user);
       return ResponseEntity.ok().body(listOfUserReservations);
    }
 
    @DeleteMapping(value = "/{reservationId}")
-   public ResponseEntity removeReservation(
+   public ResponseEntity<Boolean> remove(
          @PathVariable Long reservationId,
          @CookieValue(name = "jwt") String token
    ) throws BadRequestException {
-      User user = userService.getUser(token);
+      User user = userService.getUserByToken(token);
       reservationService.removeReservation(user, reservationId);
-      return ResponseEntity.ok(null);
+      return ResponseEntity.ok(true);
    }
 
    @ExceptionHandler({BadRequestException.class})
-   public ResponseEntity<String> handleInvalidTopTalentDataException(BadRequestException e) {
+   public ResponseEntity<String> exceptionsHandler(BadRequestException e) {
       return ResponseEntity.badRequest().body(gson.toJson(e.getMessage()));
    }
 }

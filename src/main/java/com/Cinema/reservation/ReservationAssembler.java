@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class ReservationAssembler {
 
-   public ReservationDto toReservationDto(Reservation reservation) {
+   public ReservationDto toDto(Reservation reservation) {
       return new ReservationDto(reservation.getId(),
             reservation.getSeatIds(),
             reservation.getNormal(),

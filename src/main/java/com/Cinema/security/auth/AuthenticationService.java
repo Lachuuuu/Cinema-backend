@@ -41,6 +41,7 @@ public class AuthenticationService {
 
    public User register(RegisterRequest request) throws BadRequestException {
       final UserRole userRole = userRoleRepository.findByName("USER").orElse(null);
+      assert userRole != null;
       final User user = new User(null,
             request.getEmail(),
             request.getFirstName(),

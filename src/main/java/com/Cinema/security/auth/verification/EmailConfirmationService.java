@@ -32,7 +32,7 @@ public class EmailConfirmationService {
 
 
    @Async
-   public void sendEmail(User user) {
+   public void send(User user) {
       String token = UUID.randomUUID().toString();
       EmailConfirmationToken confirmationToken = new EmailConfirmationToken(null, token, LocalDate.now().plusDays(1), user);
 
@@ -46,7 +46,7 @@ public class EmailConfirmationService {
       javaMailSender.send(mailMessage);
    }
 
-   public void confirmEmail(String confirmationToken) throws BadRequestException {
+   public void confirm(String confirmationToken) throws BadRequestException {
 
       EmailConfirmationToken token = emailConfirmationRepository.findByConfirmationToken(confirmationToken);
 

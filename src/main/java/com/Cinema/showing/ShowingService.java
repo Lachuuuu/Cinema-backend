@@ -73,7 +73,7 @@ public class ShowingService {
 
    public List<ShowingDto> getAllShowings() {
       final List<ShowingDto> showings = showingRepository.findAllByIsActive(true).stream()
-            .map(it -> showingAssembler.toShowingDto(it))
+            .map(it -> showingAssembler.toDto(it))
             .collect(Collectors.toList());
       return showings;
    }

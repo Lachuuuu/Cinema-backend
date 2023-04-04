@@ -53,7 +53,7 @@ class MovieServiceTest {
             new Movie(1L, "title", "des", 60L, LocalDate.now(), null, 10L, null, Set.of()),
             new Movie(2L, "title", "des", 60L, LocalDate.now(), null, 10L, null, Set.of())
       );
-      List<MovieDto> moviesDtos = moviesInDatabase.stream().map(it -> movieAssembler.toMovieDto(it)).collect(Collectors.toList());
+      List<MovieDto> moviesDtos = moviesInDatabase.stream().map(it -> movieAssembler.toDto(it)).collect(Collectors.toList());
       // when
       when(movieRepository.findAllByOrderById()).thenReturn(moviesInDatabase);
       // then
@@ -88,7 +88,7 @@ class MovieServiceTest {
       // when
       when(movieRepository.findById(any())).thenReturn(Optional.of(movie));
       // then
-      assertEquals(movieAssembler.toMovieDto(movie), movieService.findMovie(movieId));
+      assertEquals(movieAssembler.toDto(movie), movieService.findMovie(movieId));
    }
 
    @Test
