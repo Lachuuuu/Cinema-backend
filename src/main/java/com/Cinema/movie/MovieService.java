@@ -8,6 +8,7 @@ import com.Cinema.security.auth.exception.BadRequestException;
 import com.Cinema.showing.Showing;
 import jakarta.transaction.Transactional;
 import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -27,7 +28,7 @@ public class MovieService {
 
    private final MovieAssembler movieAssembler;
 
-   private final Validator validator;
+   private final Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
 
    public Movie add(NewMovieRequest request) throws BadRequestException {
       Set<Genre> genres = genreRepository.findAllByIdIsIn(request.getGenres());

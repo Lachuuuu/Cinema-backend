@@ -86,7 +86,7 @@ class HallServiceTest {
    }
 
    @Test
-   void removeHall_Should_Return_Exception_When_There_Are_Showings_In_The_Hall() {
+   void Should_Return_Exception_When_There_Are_Showings_In_The_Hall() {
       //given
       Long hallId = 1L;
       Hall hall = new Hall(1L, "", "");
@@ -99,7 +99,7 @@ class HallServiceTest {
    }
 
    @Test
-   void getAllHalls_Should_Return_All_Halls() {
+   void Should_Return_All_Halls() {
       //given
       List<Hall> halls = List.of(new Hall(1L, "101|101", "duza"), new Hall(2L, "10|10", "mala"));
       //when
