@@ -14,18 +14,18 @@ public class GenreService {
 
    private final GenreRepository genreRepository;
 
-   public List<Genre> getAllGenres() {
+   public List<Genre> getAll() {
       return genreRepository.findAll();
    }
 
-   public Genre addGenre(String genreName) throws BadRequestException {
+   public Genre add(String genreName) throws BadRequestException {
       if (!genreRepository.existsByName(genreName)) {
          Genre newGenre = new Genre(null, genreName);
          return genreRepository.save(newGenre);
       } else throw new BadRequestException("Genre with that name already exists");
    }
 
-   public List<Genre> removeGenre(Long genreId) throws BadRequestException {
+   public List<Genre> remove(Long genreId) throws BadRequestException {
       Genre genre = genreRepository.findById(genreId).orElseThrow(() -> new BadRequestException("Genre not found"));
       genreRepository.delete(genre);
 

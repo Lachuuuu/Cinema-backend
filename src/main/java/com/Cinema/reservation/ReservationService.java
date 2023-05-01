@@ -8,8 +8,6 @@ import com.Cinema.showing.ShowingRepository;
 import com.Cinema.showing.ShowingService;
 import com.Cinema.user.User;
 import jakarta.transaction.Transactional;
-import jakarta.validation.ConstraintViolation;
-import jakarta.validation.Validator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -31,15 +29,13 @@ public class ReservationService {
    @Value("${price.discount}")
    private BigDecimal discountTicketPrice;
 
-   private final Validator validator;
-
    private final ShowingRepository showingRepository;
 
    private final ShowingService showingService;
 
    private final ReservationAssembler reservationAssembler;
 
-   public Reservation addReservation(User user, AddReservationRequest addReservationRequest) throws BadRequestException {
+   public Reservation add(User user, AddReservationRequest addReservationRequest) throws BadRequestException {
 
       Showing showing = showingRepository.findById(addReservationRequest.getShowingId()).orElse(null);
       if (showing == null) throw new BadRequestException("showing do not exist");
@@ -57,9 +53,6 @@ public class ReservationService {
             showing
       );
 
-      final Set<ConstraintViolation<Reservation>> constraints = validator.validate(newReservation);
-      if (!constraints.isEmpty()) throw new BadRequestException(constraints.iterator().next().getMessage());
-
       showingService.updateSeatsMap(showing, addReservationRequest.getSeatIds());
 
       return reservationRepository.save(newReservation);
@@ -67,13 +60,12 @@ public class ReservationService {
 
    public Set<ReservationDto> getUserReservations(User user) {
       List<Reservation> userReservations = reservationRepository.findAllByUserOrderById(user);
-      Set<ReservationDto> result = userReservations.stream()
-            .map(it -> reservationAssembler.toReservationDto(it))
+      return userReservations.stream()
+            .map(reservationAssembler::toDto)
             .collect(Collectors.toSet());
-      return result;
    }
 
-   public void removeReservation(User user, Long reservationId) throws BadRequestException {
+   public void remove(User user, Long reservationId) throws BadRequestException {
       Reservation reservation = reservationRepository.findById(reservationId)
             .orElseThrow(() -> new BadRequestException("Reservation not found"));
       if (!reservation.getUser().equals(user)) throw new BadRequestException("You are not owner of the reservation");

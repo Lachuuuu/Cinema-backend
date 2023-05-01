@@ -7,8 +7,6 @@ import com.Cinema.movie.request.NewMovieRequest;
 import com.Cinema.security.auth.exception.BadRequestException;
 import com.Cinema.showing.Showing;
 import jakarta.transaction.Transactional;
-import jakarta.validation.ConstraintViolation;
-import jakarta.validation.Validator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -27,9 +25,7 @@ public class MovieService {
 
    private final MovieAssembler movieAssembler;
 
-   private final Validator validator;
-
-   public Movie addMovie(NewMovieRequest request) throws BadRequestException {
+   public Movie add(NewMovieRequest request) throws BadRequestException {
       Set<Genre> genres = genreRepository.findAllByIdIsIn(request.getGenres());
 
       if (request.getImage() == null) request.setImage("");
@@ -46,9 +42,6 @@ public class MovieService {
             Set.of()
       );
 
-      final Set<ConstraintViolation<Movie>> constraints = validator.validate(movie);
-      if (!constraints.isEmpty()) throw new BadRequestException(constraints.iterator().next().getMessage());
-
       try {
          return movieRepository.save(movie);
       } catch (Exception e) {
@@ -56,33 +49,31 @@ public class MovieService {
       }
    }
 
-   public List<MovieDto> removeMovie(Long movieId) throws BadRequestException {
+   public List<MovieDto> remove(Long movieId) throws BadRequestException {
       Movie movie = movieRepository.findById(movieId)
             .orElseThrow(() -> new BadRequestException("Movie not found"));
 
       Set<Showing> showings = movie.getShowings().stream()
-            .filter(showing -> showing.getIsActive() == true)
+            .filter(Showing::getIsActive)
             .collect(Collectors.toSet());
 
       if (showings.isEmpty()) movieRepository.delete(movie);
       else throw new BadRequestException("Showings uses this movie, delete them first");
 
       List<Movie> movies = movieRepository.findAllByOrderById();
-      List<MovieDto> result = movies.stream().map(it -> movieAssembler.toMovieDto(it)).collect(Collectors.toList());
 
-      return result;
+      return movies.stream().map(movieAssembler::toDto).collect(Collectors.toList());
 
    }
 
-   public MovieDto findMovie(Long movieId) throws BadRequestException {
+   public MovieDto find(Long movieId) throws BadRequestException {
       Movie movie = movieRepository.findById(movieId).orElseThrow(() -> new BadRequestException("Movie not found"));
-      return movieAssembler.toMovieDto(movie);
+      return movieAssembler.toDto(movie);
    }
 
-   public List<MovieDto> findAllMovies() {
+   public List<MovieDto> findAll() {
       List<Movie> movies = movieRepository.findAllByOrderById();
-      List<MovieDto> result = movies.stream().map(it -> movieAssembler.toMovieDto(it)).collect(Collectors.toList());
-      return result;
+      return movies.stream().map(movieAssembler::toDto).collect(Collectors.toList());
    }
 
 }

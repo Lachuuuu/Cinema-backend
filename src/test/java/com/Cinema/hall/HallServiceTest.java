@@ -39,7 +39,7 @@ class HallServiceTest {
       addHallRequest.setSeatsMap(null);
 
       // then
-      BadRequestException exception = assertThrows(BadRequestException.class, () -> hallService.addHall(addHallRequest));
+      BadRequestException exception = assertThrows(BadRequestException.class, () -> hallService.add(addHallRequest));
       assertEquals("Seats map and name cannot be empty", exception.getMessage());
    }
 
@@ -55,8 +55,8 @@ class HallServiceTest {
       addHallRequest.setSeatsMap("101|101");
 
       // then
-      BadRequestException exception = assertThrows(BadRequestException.class, () -> hallService.addHall(addHallRequest));
-      BadRequestException exception2 = assertThrows(BadRequestException.class, () -> hallService.addHall(addHallRequest2));
+      BadRequestException exception = assertThrows(BadRequestException.class, () -> hallService.add(addHallRequest));
+      BadRequestException exception2 = assertThrows(BadRequestException.class, () -> hallService.add(addHallRequest2));
 
       assertEquals("Seats map and name cannot be empty", exception.getMessage());
       assertEquals("Seats map and name cannot be empty", exception2.getMessage());
@@ -71,7 +71,7 @@ class HallServiceTest {
       // when
       when(hallRepository.save(any(Hall.class))).thenReturn(new Hall());
       // then
-      assertEquals(Hall.class, hallService.addHall(addHallRequest).getClass());
+      assertEquals(Hall.class, hallService.add(addHallRequest).getClass());
    }
 
    @Test
@@ -81,12 +81,12 @@ class HallServiceTest {
       //when
       when(hallRepository.findById(any())).thenReturn(Optional.empty());
       //then
-      BadRequestException exception = assertThrows(BadRequestException.class, () -> hallService.removeHall(hallId));
+      BadRequestException exception = assertThrows(BadRequestException.class, () -> hallService.remove(hallId));
       assertEquals("Hall not found", exception.getMessage());
    }
 
    @Test
-   void removeHall_Should_Return_Exception_When_There_Are_Showings_In_The_Hall() {
+   void Should_Return_Exception_When_There_Are_Showings_In_The_Hall() {
       //given
       Long hallId = 1L;
       Hall hall = new Hall(1L, "", "");
@@ -94,17 +94,17 @@ class HallServiceTest {
       when(hallRepository.findById(any(Long.class))).thenReturn(Optional.of(hall));
       when(showingRepository.findAllByHallAndIsActive(hall, true)).thenReturn(List.of(new Showing(null, null, hall, null, null, null, true, null)));
       //then
-      BadRequestException exception = assertThrows(BadRequestException.class, () -> hallService.removeHall(hallId));
+      BadRequestException exception = assertThrows(BadRequestException.class, () -> hallService.remove(hallId));
       assertEquals("There are showings in the hall, delete them first", exception.getMessage());
    }
 
    @Test
-   void getAllHalls_Should_Return_All_Halls() {
+   void Should_Return_All_Halls() {
       //given
       List<Hall> halls = List.of(new Hall(1L, "101|101", "duza"), new Hall(2L, "10|10", "mala"));
       //when
       when(hallRepository.findAll()).thenReturn(halls);
       //then
-      assertEquals(halls, hallService.getAllHalls());
+      assertEquals(halls, hallService.getAll());
    }
 }

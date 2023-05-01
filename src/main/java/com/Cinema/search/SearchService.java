@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -22,19 +21,19 @@ public class SearchService {
 
    private final MovieAssembler movieAssembler;
 
-   public Set<MovieDto> search(String query) {
+   public Set<MovieDto> searchByQuery(String query) {
       List<Movie> movies = movieRepository.findAll();
-      List<Movie> moviesByName = movies.stream().filter(it -> it.getName().contains(query)).collect(Collectors.toList());
+      List<Movie> moviesByName = movies.stream().filter(it -> it.getName().contains(query)).toList();
       List<Movie> moviesByGenre = movies.stream().filter(
-            it -> !it.getGenres().stream().filter(genre -> genre.getName().contains(query)).findAny().isEmpty()
-      ).collect(Collectors.toList());
+            it -> it.getGenres().stream().anyMatch(genre -> genre.getName().contains(query))
+      ).toList();
 
       Set<Movie> mergedSet = new HashSet<>();
       mergedSet.addAll(moviesByName);
       mergedSet.addAll(moviesByGenre);
 
       Set<MovieDto> result = new HashSet<>();
-      mergedSet.forEach(it -> result.add(movieAssembler.toMovieDto(it)));
+      mergedSet.forEach(it -> result.add(movieAssembler.toDto(it)));
 
       return result;
    }

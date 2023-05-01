@@ -40,7 +40,7 @@ public class ShowingService {
       return showingRepository.save(showing);
    }
 
-   public Showing addShowing(AddShowingRequest addShowingRequest) throws BadRequestException {
+   public Showing add(AddShowingRequest addShowingRequest) throws BadRequestException {
       final Movie movie = movieRepository.findById(addShowingRequest.getMovieId()).orElseThrow(() -> new BadRequestException("Movie not found"));
       final Hall hall = hallRepository.findById(addShowingRequest.getHallId()).orElseThrow(() -> new BadRequestException("Hall not found"));
 
@@ -57,7 +57,7 @@ public class ShowingService {
       return showingRepository.save(newShowing);
    }
 
-   public List<Showing> removeShowing(Long showingId) throws BadRequestException {
+   public List<Showing> remove(Long showingId) throws BadRequestException {
       final Showing showing = showingRepository.findById(showingId)
             .orElseThrow(() -> new BadRequestException("Showing not found"));
       showing.setIsActive(false);
@@ -71,14 +71,13 @@ public class ShowingService {
       return showingRepository.findAll();
    }
 
-   public List<ShowingDto> getAllShowings() {
-      final List<ShowingDto> showings = showingRepository.findAllByIsActive(true).stream()
-            .map(it -> showingAssembler.toShowingDto(it))
+   public List<ShowingDto> getAll() {
+      return showingRepository.findAllByIsActive(true).stream()
+            .map(showingAssembler::toDto)
             .collect(Collectors.toList());
-      return showings;
    }
 
-   public Showing updateShowing(UpdateShowingRequest updateShowingRequest) throws BadRequestException {
+   public Showing update(UpdateShowingRequest updateShowingRequest) throws BadRequestException {
       final Showing showing = showingRepository.findById(updateShowingRequest.getShowingId())
             .orElseThrow(() -> new BadRequestException("Showing not found"));
 
