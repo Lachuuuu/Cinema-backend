@@ -10,10 +10,18 @@ import com.Cinema.user.dto.UserDto;
 import com.google.gson.Gson;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -27,8 +35,8 @@ public class AuthenticationController {
    private final UserAssembler userAssembler;
 
    @PostMapping(value = "/register", consumes = MediaType.APPLICATION_JSON_VALUE)
-   public ResponseEntity<?> register(
-         @RequestBody RegisterRequest request
+   public ResponseEntity<String> register(
+         @RequestBody @Valid RegisterRequest request
    ) throws BadRequestException {
       User user = authenticationService.register(request);
       if (user != null) emailConfirmationService.send(user);
@@ -37,7 +45,7 @@ public class AuthenticationController {
 
    @PostMapping(value = "/authenticate", consumes = MediaType.APPLICATION_JSON_VALUE)
    public ResponseEntity<UserDto> auth(
-         @RequestBody AuthenticationRequest request,
+         @RequestBody @Valid AuthenticationRequest request,
          HttpServletResponse response
    ) throws BadRequestException {
       User authenticatedUser = cookieService.createAuthenticationCookies(request, response);
@@ -60,5 +68,19 @@ public class AuthenticationController {
    @ExceptionHandler({BadRequestException.class})
    public ResponseEntity<String> exceptionsHandler(BadRequestException e) {
       return ResponseEntity.badRequest().body(gson.toJson(e.getMessage()));
+   }
+
+   @ExceptionHandler({MethodArgumentNotValidException.class})
+   public ResponseEntity<String> exceptionsHandlerForValidation(MethodArgumentNotValidException exception) {
+      BindingResult result = exception.getBindingResult();
+      List<FieldError> fieldErrors = result.getFieldErrors();
+      return ResponseEntity.badRequest()
+            .body(
+                  gson.toJson(
+                        fieldErrors.stream()
+                              .map(DefaultMessageSourceResolvable::getDefaultMessage)
+                              .collect(Collectors.joining(""))
+                  )
+            );
    }
 }

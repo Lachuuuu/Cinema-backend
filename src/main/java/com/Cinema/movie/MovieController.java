@@ -4,12 +4,18 @@ import com.Cinema.movie.dto.MovieDto;
 import com.Cinema.movie.request.NewMovieRequest;
 import com.Cinema.security.auth.exception.BadRequestException;
 import com.google.gson.Gson;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -20,7 +26,7 @@ public class MovieController {
    private final Gson gson;
 
    @PostMapping(value = "/admin/add", consumes = MediaType.APPLICATION_JSON_VALUE)
-   public ResponseEntity<String> add(@RequestBody NewMovieRequest request) throws BadRequestException {
+   public ResponseEntity<String> add(@RequestBody @Valid NewMovieRequest request) throws BadRequestException {
       movieService.add(request);
       return ResponseEntity.ok(gson.toJson("Movie added successfully"));
    }
@@ -46,6 +52,20 @@ public class MovieController {
    @ExceptionHandler({BadRequestException.class})
    public ResponseEntity<String> exceptionsHandler(BadRequestException e) {
       return ResponseEntity.badRequest().body(gson.toJson(e.getMessage()));
+   }
+
+   @ExceptionHandler({MethodArgumentNotValidException.class})
+   public ResponseEntity<String> exceptionsHandlerForValidation(MethodArgumentNotValidException exception) {
+      BindingResult result = exception.getBindingResult();
+      List<FieldError> fieldErrors = result.getFieldErrors();
+      return ResponseEntity.badRequest()
+            .body(
+                  gson.toJson(
+                        fieldErrors.stream()
+                              .map(DefaultMessageSourceResolvable::getDefaultMessage)
+                              .collect(Collectors.joining(""))
+                  )
+            );
    }
 
 }

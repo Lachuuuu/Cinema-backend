@@ -6,12 +6,19 @@ import com.Cinema.security.auth.exception.BadRequestException;
 import com.Cinema.user.User;
 import com.Cinema.user.UserService;
 import com.google.gson.Gson;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @RestController
 @AllArgsConstructor
@@ -26,7 +33,7 @@ public class ReservationController {
    @PostMapping(value = "/add", consumes = MediaType.APPLICATION_JSON_VALUE)
    public ResponseEntity<String> add(
          @CookieValue(name = "jwt") String token,
-         @RequestBody AddReservationRequest addReservationRequest
+         @RequestBody @Valid AddReservationRequest addReservationRequest
    ) throws BadRequestException {
       User user = userService.getUserByToken(token);
       reservationService.add(user, addReservationRequest);
@@ -55,5 +62,19 @@ public class ReservationController {
    @ExceptionHandler({BadRequestException.class})
    public ResponseEntity<String> exceptionsHandler(BadRequestException e) {
       return ResponseEntity.badRequest().body(gson.toJson(e.getMessage()));
+   }
+
+   @ExceptionHandler({MethodArgumentNotValidException.class})
+   public ResponseEntity<String> exceptionsHandlerForValidation(MethodArgumentNotValidException exception) {
+      BindingResult result = exception.getBindingResult();
+      List<FieldError> fieldErrors = result.getFieldErrors();
+      return ResponseEntity.badRequest()
+            .body(
+                  gson.toJson(
+                        fieldErrors.stream()
+                              .map(DefaultMessageSourceResolvable::getDefaultMessage)
+                              .collect(Collectors.joining(""))
+                  )
+            );
    }
 }

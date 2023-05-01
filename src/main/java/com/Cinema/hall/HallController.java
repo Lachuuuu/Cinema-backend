@@ -3,12 +3,18 @@ package com.Cinema.hall;
 import com.Cinema.hall.request.AddHallRequest;
 import com.Cinema.security.auth.exception.BadRequestException;
 import com.google.gson.Gson;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -25,7 +31,7 @@ public class HallController {
    }
 
    @PostMapping(value = "/admin/add")
-   public ResponseEntity<Hall> add(@RequestBody AddHallRequest addHallRequest) throws BadRequestException {
+   public ResponseEntity<Hall> add(@RequestBody @Valid AddHallRequest addHallRequest) throws BadRequestException {
       Hall hall = hallService.add(addHallRequest);
       return ResponseEntity.ok(hall);
    }
@@ -38,7 +44,21 @@ public class HallController {
 
    @ExceptionHandler({BadRequestException.class})
    public ResponseEntity<String> exceptionsHandler(BadRequestException e) {
-      return ResponseEntity.badRequest().body(gson.toJson(e.getMessage()));
+      return ResponseEntity.badRequest().body(gson.toJson(e.getLocalizedMessage()));
+   }
+
+   @ExceptionHandler({MethodArgumentNotValidException.class})
+   public ResponseEntity<String> exceptionsHandlerForValidation(MethodArgumentNotValidException exception) {
+      BindingResult result = exception.getBindingResult();
+      List<FieldError> fieldErrors = result.getFieldErrors();
+      return ResponseEntity.badRequest()
+            .body(
+                  gson.toJson(
+                        fieldErrors.stream()
+                              .map(DefaultMessageSourceResolvable::getDefaultMessage)
+                              .collect(Collectors.joining(""))
+                  )
+            );
    }
 
 }

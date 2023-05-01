@@ -8,8 +8,6 @@ import com.Cinema.showing.ShowingRepository;
 import com.Cinema.showing.ShowingService;
 import com.Cinema.user.User;
 import jakarta.transaction.Transactional;
-import jakarta.validation.ConstraintViolation;
-import jakarta.validation.Validator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -30,8 +28,6 @@ public class ReservationService {
 
    @Value("${price.discount}")
    private BigDecimal discountTicketPrice;
-
-   private final Validator validator;
 
    private final ShowingRepository showingRepository;
 
@@ -56,9 +52,6 @@ public class ReservationService {
             calculateTotalValue(addReservationRequest.getNormal(), addReservationRequest.getDiscount()),
             showing
       );
-
-      final Set<ConstraintViolation<Reservation>> constraints = validator.validate(newReservation);
-      if (!constraints.isEmpty()) throw new BadRequestException(constraints.iterator().next().getMessage());
 
       showingService.updateSeatsMap(showing, addReservationRequest.getSeatIds());
 

@@ -10,8 +10,6 @@ import com.Cinema.user.UserService;
 import com.Cinema.user.userRole.UserRole;
 import com.Cinema.user.userRole.UserRoleRepository;
 import jakarta.transaction.Transactional;
-import jakarta.validation.ConstraintViolation;
-import jakarta.validation.Validator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -35,8 +33,6 @@ public class AuthenticationService {
 
    private final PasswordEncoder passwordEncoder;
 
-   private final Validator validator;
-
    private final UserService userService;
 
    public User register(RegisterRequest request) throws BadRequestException {
@@ -54,11 +50,6 @@ public class AuthenticationService {
 
       final String unique = userService.checkIfRequestIsUnique(request);
       if (unique != null) throw new BadRequestException(unique);
-
-      final Set<ConstraintViolation<User>> constraints = validator.validate(user);
-      if (!constraints.isEmpty()) throw new BadRequestException(constraints.iterator().next().getMessage());
-      final Set<ConstraintViolation<RegisterRequest>> constraintsDTO = validator.validate(request);
-      if (!constraintsDTO.isEmpty()) throw new BadRequestException(constraintsDTO.iterator().next().getMessage());
 
       userRepository.save(user);
       return user;
