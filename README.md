@@ -8,6 +8,7 @@ Used Technologies:
 - Lombok  
 - Hibernate / JPA  
 - PostgreSQL  
+- JUnit / Mockito
 
 Avaible Features:  
 - JWT authorization [login (USER) / register (EVERYONE)]  
